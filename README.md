@@ -33,7 +33,7 @@ To run the Lesson Management System locally, ensure you have the following insta
 
 1. Clone the repoistory
 ```bash
-git clone <repository-url>
+git clone https://github.com/Winterz-Heart/Lesson-Management-System
 
 cd Lesson-Management-System
 ```

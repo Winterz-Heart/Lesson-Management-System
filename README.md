@@ -9,6 +9,10 @@
 - Djoser
 - Vue.js
 - Bulma CSS Framework
+- Vitest
+- @vue/test-utils
+- @vitejs/plugin-vue
+- happy-dom
 
 ### Prerequisites
 To run the Lesson Management System locally, ensure you have the following installed:

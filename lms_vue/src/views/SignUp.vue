@@ -97,7 +97,7 @@ export default {
             }
 
             if (this.last_name === '') {
-                this.errors.push('You must input an Last name')
+                this.errors.push('You must input a Last name')
             }
 
             if (this.password === '') {

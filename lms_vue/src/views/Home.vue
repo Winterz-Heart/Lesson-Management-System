@@ -1,11 +1,10 @@
 <template>
   <div class="home">
     <div class="hero is-info">
-      <div class="her-body has-text-centered">
+      <div class="hero-body has-text-centered">
         <h1 class="title">Welcome to LMS</h1>
         <br/>
         <h2 class="subtitle">An online place for learning course and lessons</h2>
-        <br/>
       </div>
     </div>
 

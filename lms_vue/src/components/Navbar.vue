@@ -16,14 +16,34 @@
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item">
-                <div class="buttons">
-                    <router-link to="/sign-up" class="button is-primary"
-                        ><strong>Sign up</strong></router-link
-                    >
-                    <router-link to="/login" class="button is-light">Login</router-link>
+            <template v-if="isAuthenticated" >
+                <div class="navbar-item">
+                    <a href="/dashboard/my-account" class="button is-primary is-size-4">
+                        <img class="fas fa-id-card" />
+                    </a>
                 </div>
-            </div>
+            </template>
+
+            <template v-else>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <router-link to="/sign-up" class="button is-primary"
+                            ><strong>Sign up</strong></router-link
+                        >
+                        <router-link to="/login" class="button is-light">Login</router-link>
+                    </div>
+                </div>
+            </template>
         </div>
     </nav>
 </template>
+
+<script>
+export default {
+    computed: {
+        isAuthenticated() {
+            return this.$store.state.user.isAuthenticated
+        }
+    }
+}
+</script>

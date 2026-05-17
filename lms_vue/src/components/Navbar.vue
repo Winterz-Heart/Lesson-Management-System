@@ -12,6 +12,7 @@
         <div id="navbar-item" class="navbar-menu">
             <div class="navbar-start">
                 <router-link to="/about" class="navbar-item">About</router-link>
+                <router-link to="/courses" class="navbar-item">Courses</router-link>
             </div>
         </div>
 
@@ -19,7 +20,7 @@
             <template v-if="isAuthenticated" >
                 <div class="navbar-item">
                     <a href="/dashboard/my-account" class="button is-primary is-size-4">
-                        <img class="fas fa-id-card" />
+                        <i class="fas fa-id-card"></i>
                     </a>
                 </div>
             </template>

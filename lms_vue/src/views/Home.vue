@@ -32,20 +32,22 @@
 </template>
 
 <script>
+import axios from 'axios'
 import CourseCard from '../components/CourseCard.vue';
 
 export default {
   data() {
     return {
-      courses: [
-        { id: 1, title: 'Vue Basics', short_description: 'Intro to Vue' },
-        { id: 2, title: 'Django Basics', short_description: 'Intro to Django' },
-        { id: 3, title: 'UI Design', short_description: 'Design fundamentals' },
-        { id: 4, title: 'Python', short_description: 'Python fundamentals' },
-    ],
+      courses: [],
     }
   },
-  mounted() {
+  async mounted() {
+    await axios
+      .get('/api/v1/courses/get_frontpage_courses/')
+      .then(response => {
+        this.courses = response.data
+      })
+
     document.title = 'Home | LMS'
   },
   components: {

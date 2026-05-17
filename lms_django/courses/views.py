@@ -21,3 +21,9 @@ def get_courses(request):
 
     serializer = CourseListSerializer(courses, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def get_frontpage_courses(request):
+    courses = Course.objects.all()[0:4]
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)

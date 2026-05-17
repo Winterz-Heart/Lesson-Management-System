@@ -137,6 +137,7 @@ export default {
         },
         setActiveCategory(category) {
             this.activeCategory = category
+            this.currentPage = 1
             this.getCourses()
         },
         getCourses() {

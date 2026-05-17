@@ -9,14 +9,20 @@
         <div class="card-content">
             <div class="media">
                 <div class="media-content">
-                    <p class="is-size-5">Course Title Here</p>
+                    <p class="is-size-5">{{ course.title }}</p>
                 </div>
             </div>
 
             <div class="content">
-                <p>Short description here</p>
+                <p>{{ course.short_description }}</p>
                 <router-link to="#">Course Link Here</router-link>
             </div>
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    props: ['course']
+}
+</script>

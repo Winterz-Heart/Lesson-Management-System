@@ -12,9 +12,13 @@
       <div class="container">
         <h3 class="subtitle has-text-centered mb-8">Here are some of our Courses!</h3>
         <div class="columns is-multiline">
-            <div v-for="cardNumber in 4" :key="cardNumber" class="column is-3">
-                <CourseCard />
-            </div>
+          <div
+            v-for="course in courses"
+            :key="course.id"
+            class="column is-3"
+          >
+            <CourseCard :course="course" />
+          </div>
         </div>
 
         <div class="column is-12 has-text-centered">
@@ -31,6 +35,16 @@
 import CourseCard from '../components/CourseCard.vue';
 
 export default {
+  data() {
+    return {
+      courses: [
+        { id: 1, title: 'Vue Basics', short_description: 'Intro to Vue' },
+        { id: 2, title: 'Django Basics', short_description: 'Intro to Django' },
+        { id: 3, title: 'UI Design', short_description: 'Design fundamentals' },
+        { id: 4, title: 'Python', short_description: 'Python fundamentals' },
+    ],
+    }
+  },
   mounted() {
     document.title = 'Home | LMS'
   },

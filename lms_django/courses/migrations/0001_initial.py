@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Catergory',
+            name='Category',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('short_description', models.TextField(blank=True, null=True)),
                 ('long_description', models.TextField(blank=True, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('categories', models.ManyToManyField(to='courses.catergory')),
+                ('categories', models.ManyToManyField(to='courses.category')),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='courses', to=settings.AUTH_USER_MODEL)),
             ],
         ),

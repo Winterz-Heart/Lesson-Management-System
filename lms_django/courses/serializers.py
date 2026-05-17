@@ -1,16 +1,16 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Catergory, Course
+from .models import Category, Course
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name')
 
-class CatergorySerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Catergory
+        model = Category
         fields = ('id', 'title', 'slug')
 
 class CourseListSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-class Catergory(models.Model):
+class Category(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
     short_description = models.TextField(blank=True, null=True)
@@ -14,7 +14,7 @@ class Catergory(models.Model):
         return self.title
     
 class Course(models.Model):
-    categories = models.ManyToManyField(Catergory)
+    categories = models.ManyToManyField(Category)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     short_description = models.TextField(blank=True, null=True)

@@ -13,12 +13,15 @@
                         <aside class="menu">
                             <p class="menu-label">Categories</p>
                             <ul class="menu-list">
-                                <li><a>All Catergories</a></li>
+                                <li @click="setActiveCategory(null)" >
+                                    <a v-bind:class="{ 'is-active': !activeCategory}" >All categories</a>
+                                </li>
                                 <li
-                                    v-for="catergory in catergories"
-                                    v-bind:key="catergory.id"
+                                    v-for="category in categories"
+                                    v-bind:key="category"
+                                    @click="setActiveCategory(category)"
                                 >
-                                    <a>{{ catergory.title }}</a>
+                                    <a v-bind:class="{ 'is-active': activeCategory === category }">{{ category.title }}</a>
                                 </li>
                                 
                             </ul>
@@ -88,23 +91,20 @@ export default {
     data() {
         return {
             courses: [],
-            catergories: [],
+            categories: [],
             currentPage: 1,
             perPage: 6,
+            activeCategory: null,
         }
     },
     async mounted() {
         await axios
-            .get('api/v1/courses/')
+            .get('/api/v1/courses/get_categories/')
             .then(response => {
-                this.courses = response.data
+                this.categories = response.data
             })
 
-        await axios
-            .get('api/v1/courses/get_catergories/')
-            .then(response => {
-                this.catergories = response.data
-            })
+        this.getCourses()
 
         document.title = 'Courses | LMS'
     },
@@ -134,7 +134,22 @@ export default {
         },
         prevPage() {
             this.goToPage(this.currentPage - 1)
-        }
+        },
+        setActiveCategory(category) {
+            this.activeCategory = category
+            this.getCourses()
+        },
+        getCourses() {
+            let url = "/api/v1/courses/";
+
+            if (this.activeCategory) {
+                url += "?category_id=" + this.activeCategory.id;
+            }
+
+            axios.get(url).then(response => {
+                this.courses = response.data;
+            })
+        },
     }
 }
 </script>

@@ -19,7 +19,7 @@ export default {
     Footer,
   },
   beforeCreate() {
-    this.$store.commit('initalizeStore')
+    this.$store.commit('initializeStore')
 
     const token = this.$store.state.user.token
 

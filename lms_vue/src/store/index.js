@@ -18,7 +18,7 @@ export default createStore({
         axios.defaults.headers.common['Authorization'] = `Token ${state.user.token}`
       } else {
         state.user.token = ''
-        state.user.isAuthenticated = flase
+        state.user.isAuthenticated = false
       }
     },
     setToken(state, token) {

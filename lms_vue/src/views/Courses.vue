@@ -98,6 +98,9 @@ export default {
             perPage: 6,
         }
     },
+    mounted() {
+        document.title = 'Courses | LMS'
+    },
     computed: {
         totalPages() {
             return Math.ceil(this.courses.length / this.perPage)

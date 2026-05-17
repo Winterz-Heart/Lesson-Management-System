@@ -14,9 +14,13 @@
                             <p class="menu-label">Categories</p>
                             <ul class="menu-list">
                                 <li><a>All Catergories</a></li>
-                                <li><a>Programming</a></li>
-                                <li><a>Design</a></li>
-                                <li><a>UX</a></li>
+                                <li
+                                    v-for="catergory in catergories"
+                                    v-bind:key="catergory.id"
+                                >
+                                    <a>{{ catergory.title }}</a>
+                                </li>
+                                
                             </ul>
                         </aside>
                     </div>
@@ -74,6 +78,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import CourseCard from '../components/CourseCard.vue';
 
 export default {
@@ -82,23 +87,25 @@ export default {
     },
     data() {
         return {
-            courses: [
-                { id: 1, title: 'Vue Basics', short_description: 'Intro to Vue' },
-                { id: 2, title: 'Django Basics', short_description: 'Intro to Django' },
-                { id: 3, title: 'UI Design', short_description: 'Design fundamentals' },
-                { id: 4, title: 'Python', short_description: 'Python fundamentals' },
-                { id: 5, title: 'REST APIs', short_description: 'API design' },
-                { id: 6, title: 'Testing', short_description: 'Testing basics' },
-                { id: 7, title: 'Auth', short_description: 'Login and tokens' },
-                { id: 8, title: 'Databases', short_description: 'SQL basics' },
-                { id: 9, title: 'Accessibility', short_description: 'A11y basics' },
-                { id: 10, title: 'Deployment', short_description: 'Shipping apps' },
-            ],
+            courses: [],
+            catergories: [],
             currentPage: 1,
             perPage: 6,
         }
     },
-    mounted() {
+    async mounted() {
+        await axios
+            .get('api/v1/courses/')
+            .then(response => {
+                this.courses = response.data
+            })
+
+        await axios
+            .get('api/v1/courses/get_catergories/')
+            .then(response => {
+                this.catergories = response.data
+            })
+
         document.title = 'Courses | LMS'
     },
     computed: {

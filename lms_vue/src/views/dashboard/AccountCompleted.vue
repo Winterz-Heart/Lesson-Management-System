@@ -29,7 +29,7 @@ export default {
                         id: item.course,
                         slug: item.course_slug,
                         title: item.course_title,
-                        short_description: 'In progress',
+                        short_description: 'Finished',
                         categories: item.course_categories,
                     }))
             })

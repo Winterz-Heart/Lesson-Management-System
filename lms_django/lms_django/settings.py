@@ -130,7 +130,7 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'lms_django.serializers.UserCreateSerializer',
         'user': 'lms_django.serializers.UserSerializer',
-        'current_user': 'lms_django.serializers.UserSerializer',
+        'current_user': 'lms_django.serializers.CurrentUserSerializer',
     },
 }
 

@@ -12,3 +12,10 @@ class UserSerializer(BaseUserSerializer):
     class Meta:
         model = BaseUserSerializer.Meta.model
         fields = ('id', 'username', 'first_name', 'last_name')
+
+class CurrentUserSerializer(BaseUserSerializer):
+    role = serializers.CharField(source='profile.role')
+
+    class Meta(BaseUserSerializer.Meta):
+        model = BaseUserSerializer.Meta.model
+        fields = ('id', 'username', 'first_name', 'last_name', 'role')

@@ -4,7 +4,10 @@ import About from '../views/About.vue'
 import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
 
-import MyAccount from '../views/dashboard/myAccount.vue'
+import MyAccount from '../views/dashboard/MyAccount.vue'
+import AccountGeneral from '../views/dashboard/AccountGeneral.vue'
+import AccountStarted from '../views/dashboard/AccountStarted.vue'
+import AccountCompleted from '../views/dashboard/AccountCompleted.vue'
 
 import Courses from '../views/Courses.vue'
 import AuthorCourses from '../views/AuthorCourses.vue'
@@ -49,7 +52,24 @@ const routes = [
   {
     path: '/dashboard/my-account',
     name: 'my-account',
-    component: MyAccount
+    component: MyAccount,
+    children: [
+      {
+        path: '',
+        name: 'my-account-general',
+        component: AccountGeneral
+      },
+      {
+        path: 'started',
+        name: 'my-account-started',
+        component: AccountStarted
+      },
+      {
+        path: 'completed',
+        name: 'my-account-completed',
+        component: AccountCompleted
+      }
+    ]
   },
 ]
 

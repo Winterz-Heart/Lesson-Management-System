@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:course_id>/start/', views.start_course),
     path('<int:course_id>/complete/', views.complete_course),
     path('my_progress/', views.get_my_progress),
-    path('course_progress/', views.get_course_progress),
+    path('<int:course_id>/course_progress/', views.get_course_progress),
 
     path('<slug:slug>/', views.get_course_details),
 ]

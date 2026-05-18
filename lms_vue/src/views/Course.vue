@@ -29,6 +29,21 @@
                     <div class="column is-10">
                         <template v-if="isAuthenticated">
                             <h2 class="subtitle">Introduction</h2>
+                            <div class="is-flex is-justify-content is-align-items-right">
+                                <p class="tag is-info ml-auto mr-1 mb-2">{{ statusLabel }}</p>
+                                <button
+                                    v-if="progress.status === 'not_started'"
+                                    @click="markStarted()"
+                                    class="tag is-info">
+                                    Click to start Course    
+                                </button>
+                                <button
+                                    v-if="progress.status === 'started'"
+                                    @click="markCompleted()"
+                                    class="tag is-info">
+                                    Click to finish Course
+                                </button>
+                            </div>
                             <br />
                             <p>{{ course.long_description }}</p>
                         </template>
@@ -61,6 +76,15 @@ export default {
                 console.log(error);
             })
 
+        await axios
+            .get(`api/v1/courses/${this.course.id}/course_progress/`)
+            .then(response => {
+                this.progress = response.data
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
         document.title = this.course.title + ' | LMS'
     },
     data() {
@@ -70,11 +94,42 @@ export default {
                     id: 0,
                 }
             },
+            progress: {
+                status: 'not_started',
+            },
         }
+    },
+    methods: {
+        async markStarted() {
+            try {
+                const response = await axios.post(`api/v1/courses/${this.course.id}/start/`)
+                this.progress = response.data
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async markCompleted() {
+            try {
+                const response = await axios.post(`api/v1/courses/${this.course.id}/complete/`)
+                this.progress = response.data
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        
     },
     computed: {
         isAuthenticated() {
             return this.$store.state.user.isAuthenticated
+        },
+        statusLabel() {
+            const map = {
+                not_started: 'Not Started',
+                started: 'Started',
+                completed: 'Completed',
+            }
+
+            return map[this.progress.status] || 'Not Started'
         }
     },
 }

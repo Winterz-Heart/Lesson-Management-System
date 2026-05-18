@@ -7,6 +7,7 @@ import SignUp from '../views/SignUp.vue'
 import MyAccount from '../views/dashboard/myAccount.vue'
 
 import Courses from '../views/Courses.vue'
+import AuthorCourses from '../views/AuthorCourses.vue'
 import Course from '../views/Course.vue'
 
 const routes = [
@@ -39,6 +40,11 @@ const routes = [
     path: '/courses/:slug',
     name: 'course',
     component: Course
+  },
+  {
+    path: '/authors/:user_id',
+    name: 'author-courses',
+    component: AuthorCourses
   },
   {
     path: '/dashboard/my-account',

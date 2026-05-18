@@ -4,7 +4,12 @@
             <div class="hero-body has-text-centered">
                 <h1 class="title">{{ course.title }}</h1>
                 <br />
-                <router-link to="#" class="subtitle">By {{ course.created_by.first_name + " " + course.created_by.last_name }}</router-link>
+                <router-link
+                    :to="{ name: 'author-courses', params: { user_id: course.created_by.id } }"
+                    class="subtitle"
+                >
+                    By {{ course.created_by.first_name + " " + course.created_by.last_name }}
+                </router-link>
             </div>
         </div>
         

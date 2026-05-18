@@ -13,7 +13,7 @@ def get_categories(request):
 
 @api_view(['GET'])
 def get_courses(request):
-    courses = Course.objects.all()
+    courses = Course.objects.all().prefetch_related('categories')
 
     category_id = request.GET.get('category_id')
     if category_id:

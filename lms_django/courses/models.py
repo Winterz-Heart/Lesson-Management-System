@@ -39,12 +39,22 @@ class Category(models.Model):
         return self.title
     
 class Course(models.Model):
+    STATUS_DRAFT = 'draft'
+    STATUS_PUBLISHED = 'published'
+
+    STATUS_CHOICES = [
+        (STATUS_DRAFT, 'Draft'),
+        (STATUS_PUBLISHED, 'Published')
+    ]
+
     categories = models.ManyToManyField(Category)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     short_description = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_DRAFT)
     created_at = models.DateTimeField(auto_now_add=True)
+    published_at = models.DateTimeField(blank=True, null=True)
     created_by = models.ForeignKey(User, related_name='courses', on_delete=models.CASCADE)
 
     def __str__(self):

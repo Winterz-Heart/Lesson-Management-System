@@ -14,7 +14,7 @@
 
 <script>
 import axios from 'axios';
-import CourseCardViewer from '@/components/CourseCardViewer.vue';
+import CourseCardViewer from '../components/CourseCardViewer.vue';
 
 export default {
     components: {

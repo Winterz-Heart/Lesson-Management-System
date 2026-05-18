@@ -11,6 +11,7 @@ vi.mock('axios', () => ({
 
 describe('Course.vue', () => {
     const mockCourse = {
+        id: 1,
         title: 'Vue Basics',
         long_description: 'Learn the fundamentals of Vue step by step.',
         created_by: {
@@ -20,10 +21,16 @@ describe('Course.vue', () => {
         }
     }
 
+    const mockProgress = {
+        status: 'not_started',
+    }
+
     beforeEach(() => {
         document.title = ''
         vi.clearAllMocks()
-        axios.get.mockResolvedValue({ data: mockCourse })
+        axios.get
+            .mockResolvedValueOnce({ data: mockCourse })
+            .mockResolvedValueOnce({ data: mockProgress })
     })
 
     function mountCourse(isAuthenticated = true) {
@@ -64,12 +71,13 @@ describe('Course.vue', () => {
         expect(document.title).toBe('Vue Basics | LMS')
     })
 
-    it('fetches the courses on mount', async () => {
+    it('fetches the course and progress on mount', async () => {
         mountCourse()
         await  flushPromises()
 
-        expect(axios.get).toHaveBeenCalledWith('api/v1/courses/vue-basics/')
-        expect(axios.get).toHaveBeenCalledTimes(1)
+        expect(axios.get).toHaveBeenNthCalledWith(1, 'api/v1/courses/vue-basics/')
+        expect(axios.get).toHaveBeenNthCalledWith(2, "api/v1/courses/1/course_progress/");
+        expect(axios.get).toHaveBeenCalledTimes(2)
     })
 
     it('renders the author name', async () => {
@@ -79,10 +87,12 @@ describe('Course.vue', () => {
         expect(wrapper.text()).toContain('By John Doe')
     })
 
-    it('shows the course description when authenticated', async () => {
+    it('shows the course description, state tag when authenticated', async () => {
         const wrapper = mountCourse()
         await  flushPromises()
 
+        expect(wrapper.text()).toContain('Not Started');
+        expect(wrapper.text()).toContain('Click to start Course');
         expect(wrapper.text()).toContain('Introduction')
         expect(wrapper.text()).toContain('Learn the fundamentals of Vue step by step.')
     })

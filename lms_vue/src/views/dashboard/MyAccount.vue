@@ -11,7 +11,7 @@
 			role="navigation account"
 			aria-label="navigation"
 		>
-			<template v-if="fetchCurrentUserRole === 'user'">
+			<template v-if="fetchCurrentUserRole === 'student'">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-start" >
 						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
@@ -24,6 +24,7 @@
 			<template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin' ">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-start" >
+						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
 						<router-link to="#" class="navbar-item">Course Creator</router-link>
 						<router-link to="#" class="navbar-item">Course Editor</router-link>
 						<router-link to="#" class="navbar-item">Draft Courses</router-link>

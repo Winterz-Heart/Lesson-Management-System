@@ -80,7 +80,7 @@ export default {
 
                 axios
                     .post('api/v1/token/login/', formData)
-                    .then(response => {
+                    .then(async response => {
                         const token = response.data.auth_token
 
                         this.$store.commit('setToken', token)
@@ -88,6 +88,8 @@ export default {
                         axios.defaults.headers.common['Authorization'] = 'Token ' + token
 
                         localStorage.setItem('token', token)
+
+                        await this.$store.dispatch('fetchCurrentUser')
 
                         this.$router.push('/dashboard/my-account')
                     })

@@ -25,7 +25,7 @@
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-start" >
 						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
-						<router-link to="#" class="navbar-item">Course Creator</router-link>
+						<router-link to="/dashboard/my-account/course-create" class="navbar-item">Course Creator</router-link>
 						<router-link to="#" class="navbar-item">Course Editor</router-link>
 						<router-link to="/dashboard/my-account/drafts" class="navbar-item">Draft Courses</router-link>
 						<router-link to="/dashboard/my-account/published" class="navbar-item">Published Courses</router-link>

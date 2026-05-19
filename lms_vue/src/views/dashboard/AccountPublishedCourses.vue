@@ -23,7 +23,6 @@ export default {
         await axios
             .get('/api/v1/courses/teacher/my_published/')
             .then(response => {
-                console.log(response.data)
                 this.courses = response.data
             })
             .catch((error) => {

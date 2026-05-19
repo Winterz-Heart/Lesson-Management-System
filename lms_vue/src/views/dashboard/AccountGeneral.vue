@@ -40,7 +40,7 @@ export default {
     methods: {
         async logout() {
             await axios
-                .post('/token/logout')
+                .post('/api/v1/token/logout/')
                 .then(() => {
                     axios.defaults.headers.common['Authorization'] = ''
                     localStorage.removeItem('token')

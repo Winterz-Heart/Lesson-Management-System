@@ -6,9 +6,14 @@ export default createStore({
     user: {
       token: '',
       isAuthenticated: false,
+      role: 'user',
+      groups: []
     }
   },
   getters: {
+    userRole: state => state.user.role,
+    userGroups: state => state.user.groups,
+    hasRole: state => role => state.user.role === role
   },
   mutations: {
     initializeStore(state) {
@@ -30,8 +35,21 @@ export default createStore({
       state.user.token = token
       state.user.isAuthenticated = false
     },
+    setCurrentUser(state, payload) {
+      state.user.role = payload?.role || 'user'
+      state.user.groups = payload?.groups || []
+    },
+    clearCurrentUser(state) {
+      state.user.role = 'user'
+      state.user.groups = []
+    }
   },
   actions: {
+    async fetchCurrentUser({ commit, state }) {
+      if (!state.user.isAuthenticated) return
+      const { data } = await axios.get('/api/v1/users/me')
+      commit('setCurrentUser', data)
+    }
   },
   modules: {
   }

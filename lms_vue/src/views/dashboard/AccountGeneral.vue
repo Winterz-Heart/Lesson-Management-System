@@ -45,6 +45,7 @@ export default {
                     axios.defaults.headers.common['Authorization'] = ''
                     localStorage.removeItem('token')
                     this.$store.commit('removeToken')
+                    this.$store.commit('clearCurrentUser')
                     this.$router.push('/')
                 })
                 .catch((error) => {

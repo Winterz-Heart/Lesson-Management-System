@@ -30,19 +30,24 @@
                         <template v-if="isAuthenticated">
                             <h2 class="subtitle">Introduction</h2>
                             <div class="is-flex is-justify-content is-align-items-right">
-                                <p class="tag is-info ml-auto mr-1 mb-2">{{ statusLabel }}</p>
-                                <button
-                                    v-if="progress.status === 'not_started'"
-                                    @click="markStarted()"
-                                    class="tag is-info">
-                                    Click to start Course    
-                                </button>
-                                <button
-                                    v-if="progress.status === 'started'"
-                                    @click="markCompleted()"
-                                    class="tag is-info">
-                                    Click to finish Course
-                                </button>
+                                <template v-if="fetchCurrentUserRole === 'student'">
+                                    <p class="tag is-info ml-auto mr-1 mb-2">{{ statusLabel }}</p>
+                                    <button
+                                        v-if="progress.status === 'not_started'"
+                                        @click="markStarted()"
+                                        class="tag is-info">
+                                        Click to start Course    
+                                    </button>
+                                    <button
+                                        v-if="progress.status === 'started'"
+                                        @click="markCompleted()"
+                                        class="tag is-info">
+                                        Click to finish Course
+                                    </button>
+                                </template>
+                                <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
+                                    <p class="tag is-info ml-auto">{{ pubOrDraft }}</p>
+                                </template>
                             </div>
                             <br />
                             <p>{{ course.long_description }}</p>
@@ -130,7 +135,13 @@ export default {
             }
 
             return map[this.progress.status] || 'Not Started'
-        }
+        },
+        fetchCurrentUserRole() {
+            return this.$store.state.user.role
+        },
+        pubOrDraft() {
+            return this.course.status === 'published' ? 'Published' : 'Draft'
+        },
     },
 }
 </script>

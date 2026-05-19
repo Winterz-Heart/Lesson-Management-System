@@ -1,10 +1,51 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import CategorySerializer, CourseListSerializer, CourseDetailSerializer, UserSerializer, CourseProgressSerializer
+from .serializers import (
+    CategorySerializer,
+    CourseListSerializer,
+    CourseDetailSerializer,
+    UserSerializer,
+    CourseProgressSerializer,
+    CourseWriteSerializer,
+    )
+from .permissions import IsAuthorOrAdmin
 from .models import Category, Course, CourseProgress
+
+def _get_user_role(user):
+    if not user.is_authenticated:
+        return None
+    
+    profile = getattr(user, 'profile', None)
+    return getattr(profile, 'role', None)
+
+def _is_admin(user):
+    return user.is_authenticated and (user.is_staff or _get_user_role(user) == 'admin')
+
+def _can_view_draft_course(request, course):
+    if _is_admin(request.user):
+        return True
+    
+    return (
+        request.user.is_authenticated and
+        _get_user_role(request.user) == 'author' and
+        course.created_by_id == request.user.id
+    )
+
+def _visible_courses_queryset(request):
+    courses = Course.objects.all().prefetch_related('categories')
+
+    if _is_admin(request.user):
+        return courses
+    
+    if request.user.is_authenticated and _get_user_role(request.user) == 'author':
+        return courses.filter(Q(status=Course.STATUS_PUBLISHED) | Q(created_by=request.user))
+    
+    return courses.filter(status=Course.STATUS_PUBLISHED)
 
 @api_view(['GET'])
 def get_categories(request):
@@ -14,7 +55,7 @@ def get_categories(request):
 
 @api_view(['GET'])
 def get_courses(request):
-    courses = Course.objects.all().prefetch_related('categories')
+    courses = _visible_courses_queryset(request)
 
     category_id = request.GET.get('category_id')
     if category_id:
@@ -25,20 +66,30 @@ def get_courses(request):
 
 @api_view(['GET'])
 def get_course_details(request, slug):
-    course = Course.objects.all().get(slug=slug)
+    course = Course.objects.select_related('created_by').prefetch_related('categories').get(slug=slug)
+
+    if course.status == Course.STATUS_DRAFT and not _can_view_draft_course(request, course):
+        return Response({'detail': 'You do not have permission to view this course'})
+
     serializer = CourseDetailSerializer(course)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def get_frontpage_courses(request):
-    courses = Course.objects.all()[0:4]
+    courses = _visible_courses_queryset(request)[0:4]
     serializer = CourseListSerializer(courses, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def get_author_courses(request, user_id):
     user = User.objects.get(pk = user_id)
-    courses = user.courses.all()
+    
+    if _is_admin(request.user):
+        courses = user.courses.all().prefetch_related('categories')
+    elif request.user.is_authenticated and request.user.id == user_id and _get_user_role(request.user) == 'author':
+        courses = user.courses.all().prefetch_related('categories')
+    else:
+        courses = user.courses.filter(status=Course.STATUS_PUBLISHED).prefecth_related('categories')
 
     user_serializer = UserSerializer(user, many=False)
     courses_serializer = CourseListSerializer(courses, many=True)
@@ -96,3 +147,58 @@ def get_course_progress(request, course_id):
 
     serializer = CourseProgressSerializer(progress, many=False)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+def teacher_create_course(request):
+    serializer = CourseWriteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(created_by=request.user)
+        return Response(serializer.data)
+    return Response(serializer.errors)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+def teacher_edit_course(request, course_id):
+    course = Course.objects.filter(id=course_id).first()
+    if course is None:
+        return Response({ 'detail': 'Not Found' })
+    
+    if not _is_admin(request.user) and course.created_by_id != request.user_id:
+        return Response({'detail': 'You do not have permission to edit this course'})
+    
+    serializer = CourseWriteSerializer(course, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return  Response(serializer.errors)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+def teacher_publish_course(request, course_id):
+    course = Course.objects.filter(id=course_id).first()
+    if course is None:
+        return Response({ 'detail': 'Not Found' })
+    
+    if not _is_admin(request.user) and course.created_by_id != request.user_id:
+        return Response({'detail': 'You do not have permission to publish this course'})
+    
+    course.status = Course.STATUS_PUBLISHED
+    course.published_at = timezone.now()
+    course.save()
+    return Response({'detail': 'Course published'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+def teacher_unpublish_course(request, course_id):
+    course = Course.objects.filter(id=course_id).first()
+    if course is None:
+        return Response({ 'detail': 'Not Found' })
+    
+    if not _is_admin(request.user) and course.created_by_id != request.user_id:
+        return Response({'detail': 'You do not have permission to unpublish this course'})
+    
+    course.status = Course.STATUS_DRAFT
+    course.published_at = timezone.now()
+    course.save()
+    return Response({'detail': 'Course unpublished'})

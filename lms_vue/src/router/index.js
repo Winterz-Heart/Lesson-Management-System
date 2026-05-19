@@ -9,6 +9,7 @@ import AccountGeneral from '../views/dashboard/AccountGeneral.vue'
 import AccountStarted from '../views/dashboard/AccountStarted.vue'
 import AccountCompleted from '../views/dashboard/AccountCompleted.vue'
 import AccountDraftCourses from '../views/dashboard/AccountDraftCourses.vue'
+import AccountPublishedCourses from '../views/dashboard/AccountPublishedCourses.vue'
 
 
 import Courses from '../views/Courses.vue'
@@ -75,6 +76,11 @@ const routes = [
         path: 'drafts',
         name: 'my-account-drafts',
         component: AccountDraftCourses
+      },
+      {
+        path: 'published',
+        name: 'my-account-published',
+        component: AccountPublishedCourses
       },
     ]
   },

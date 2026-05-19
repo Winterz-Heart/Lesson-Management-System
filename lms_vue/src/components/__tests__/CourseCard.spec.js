@@ -14,7 +14,7 @@ describe('CourseCard.vue', () => {
             global: {
                 stubs: {
                     RouterLink: {
-                        template: '<a><slot /><a>'
+                        template: '<a><slot /></a>'
                     }
                 }
             }

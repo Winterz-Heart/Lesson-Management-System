@@ -96,6 +96,7 @@ describe('AccountGeneral.vue', () => {
         expect(axios.defaults.headers.common['Authorization']).toBe('');
         expect(localStorage.getItem('token')).toBeNull();
         expect(store.commit).toHaveBeenCalledWith('removeToken');
+        expect(store.commit).toHaveBeenCalledWith('clearCurrentUser')
         expect(router.push).toHaveBeenCalledWith('/');
     })
 

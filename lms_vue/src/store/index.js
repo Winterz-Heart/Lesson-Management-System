@@ -6,6 +6,7 @@ export default createStore({
     user: {
       token: '',
       isAuthenticated: false,
+      id: null,
       role: 'user',
       groups: []
     }
@@ -36,10 +37,12 @@ export default createStore({
       state.user.isAuthenticated = false
     },
     setCurrentUser(state, payload) {
+      state.user.id = payload?.id
       state.user.role = payload?.role
       state.user.groups = payload?.groups
     },
     clearCurrentUser(state) {
+      state.user.id = null
       state.user.role = 'user'
       state.user.groups = []
     }

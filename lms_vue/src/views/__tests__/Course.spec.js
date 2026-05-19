@@ -89,15 +89,54 @@ describe('Course.vue', () => {
         expect(wrapper.text()).toContain('By John Doe')
     })
 
-    it('shows the course description, state tag when authenticated student', async () => {
+    it('shows the course description, course state tag when authenticated student', async () => {
         const wrapper = mountCourse()
         await  flushPromises()
 
         expect(wrapper.text()).toContain('Not Started');
         expect(wrapper.text()).not.toContain('Draft');
+        expect(wrapper.text()).not.toContain('Click to edit')
         expect(wrapper.text()).toContain('Click to start Course');
         expect(wrapper.text()).toContain('Introduction');
         expect(wrapper.text()).toContain('Learn the fundamentals of Vue step by step.');
+    })
+
+    it('shows the course description, status tag and edit when authenticated teacher', async () => {
+        const wrapper = mountCourse(true, 'teacher')
+        await  flushPromises()
+
+        expect(wrapper.text()).not.toContain('Not Started');
+        expect(wrapper.text()).toContain('Draft');
+        expect(wrapper.text()).not.toContain('Click to start Course');
+        expect(wrapper.text()).toContain('Introduction');
+        expect(wrapper.text()).toContain('Learn the fundamentals of Vue step by step.');
+    })
+
+    it('shows Click to Edit if user is author of course', async () => {
+        const wrapper = mount(Course, {
+            global: {
+                mocks: {
+                    $route: {
+                        params: {
+                            slug: 'vue-basics'
+                        }
+                    },
+                    $store: {
+                        state: {
+                            user: { isAuthenticated: true, role: 'teacher', id: 1 }
+                        }
+                    }
+                },
+                stubs: {
+                    RouterLink: {
+                        template: '<a><slot /></a>'
+                    }
+                }
+            }
+        })
+        await  flushPromises()
+
+        expect(wrapper.text()).toContain('Click to Edit');
     })
 
     it('shows restricted access when not  authenticated', async () => {

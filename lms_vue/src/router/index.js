@@ -90,7 +90,7 @@ const routes = [
       },
       {
         path: 'course-edit',
-        name: 'my-account-course-sedit',
+        name: 'my-account-course-edit',
         component: CourseEditor
       },
     ]

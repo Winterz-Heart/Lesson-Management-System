@@ -3,7 +3,6 @@
         <div class="hero is-info">
             <div class="hero-body has-text-centered">
                 <h1 class="title">{{ course.title }}</h1>
-                <br />
                 <router-link
                     :to="{ name: 'teacher-courses', params: { user_id: course.created_by.id } }"
                     class="subtitle"
@@ -45,14 +44,18 @@
                                         Click to finish Course
                                     </button>
                                 </template>
+
                                 <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
                                     <p class="tag is-info ml-auto">{{ pubOrDraft }}</p>
-                                    <router-link
+                                    <template v-if="isCreator">
+                                        <router-link
                                         class="tag is-info"
                                         :to="{ name: 'my-account-course-edit', params: { course_id: course.id } }"
-                                    >
-                                        Click to Edit
-                                    </router-link>
+                                        >
+                                            Click to Edit
+                                        </router-link>
+                                    </template>
+                                    
                                 </template>
                             </div>
                             <br />
@@ -132,6 +135,9 @@ export default {
     computed: {
         isAuthenticated() {
             return this.$store.state.user.isAuthenticated
+        },
+        isCreator() {
+            return this.$store.state.user.id === this.course.created_by.id
         },
         statusLabel() {
             const map = {

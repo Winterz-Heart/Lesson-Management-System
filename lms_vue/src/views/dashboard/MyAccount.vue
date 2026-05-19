@@ -27,7 +27,7 @@
 						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
 						<router-link to="#" class="navbar-item">Course Creator</router-link>
 						<router-link to="#" class="navbar-item">Course Editor</router-link>
-						<router-link to="#" class="navbar-item">Draft Courses</router-link>
+						<router-link to="/dashboard/my-account/drafts" class="navbar-item">Draft Courses</router-link>
 						<router-link to="#" class="navbar-item">Published Courses</router-link>
 					</div>
 				</div>

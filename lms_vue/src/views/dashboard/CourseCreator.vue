@@ -133,7 +133,7 @@ export default {
                 }
 
                 await axios
-                    .post('api/v1/courses/teacher/create/', payload)
+                    .post('/api/v1/courses/teacher/create/', payload)
                     .then(response => {
                         this.$router.push(`/courses/${response.data.slug}`)
                     })

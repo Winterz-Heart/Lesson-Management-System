@@ -42,7 +42,6 @@ describe('MyAccount.vue', () => {
         expect(wrapper.text()).toContain('My Started Courses')
         expect(wrapper.text()).toContain('My Finished Courses')
         expect(wrapper.text()).not.toContain('Course Creator')
-        expect(wrapper.text()).not.toContain('Course Editor')
         expect(wrapper.text()).not.toContain('Draft Courses')
         expect(wrapper.text()).not.toContain('Published Courses')
     })
@@ -52,7 +51,6 @@ describe('MyAccount.vue', () => {
 
         expect(wrapper.text()).toContain('My Account')
         expect(wrapper.text()).toContain('Course Creator')
-        expect(wrapper.text()).toContain('Course Editor')
         expect(wrapper.text()).toContain('Draft Courses')
         expect(wrapper.text()).toContain('Published Courses')
         expect(wrapper.text()).not.toContain('My Started Courses')

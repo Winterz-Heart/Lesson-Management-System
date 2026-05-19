@@ -11,7 +11,7 @@ import AccountCompleted from '../views/dashboard/AccountCompleted.vue'
 import AccountDraftCourses from '../views/dashboard/AccountDraftCourses.vue'
 import AccountPublishedCourses from '../views/dashboard/AccountPublishedCourses.vue'
 import CourseCreator from '../views/dashboard/CourseCreator.vue'
-
+import CourseEditor from '../views/dashboard/CourseEditor.vue'
 
 import Courses from '../views/Courses.vue'
 import TeacherCourses from '../views/TeacherCourses.vue'
@@ -87,6 +87,11 @@ const routes = [
         path: 'course-create',
         name: 'my-account-course-create',
         component: CourseCreator
+      },
+      {
+        path: 'course-edit',
+        name: 'my-account-course-sedit',
+        component: CourseEditor
       },
     ]
   },

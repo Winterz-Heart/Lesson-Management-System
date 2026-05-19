@@ -47,6 +47,12 @@
                                 </template>
                                 <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
                                     <p class="tag is-info ml-auto">{{ pubOrDraft }}</p>
+                                    <router-link
+                                        class="tag is-info"
+                                        :to="{ name: 'my-account-course-edit', params: { course_id: course.id } }"
+                                    >
+                                        Click to Edit
+                                    </router-link>
                                 </template>
                             </div>
                             <br />

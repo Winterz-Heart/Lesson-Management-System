@@ -202,3 +202,25 @@ def teacher_unpublish_course(request, course_id):
     course.published_at = timezone.now()
     course.save()
     return Response({'detail': 'Course unpublished'})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
+def get_my_draft_courses(request):
+    courses = Course.objects.filter(
+        created_by = request.user,
+        status=Course.STATUS_DRAFT
+    ).prefetch_related('categories')
+
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
+def get_my_published_courses(request):
+    courses = Course.objects.filter(
+        created_by = request.user,
+        status=Course.STATUS_PUBLISHED
+    ).prefetch_related('categories')
+
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)

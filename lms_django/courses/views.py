@@ -58,8 +58,13 @@ def get_courses(request):
     courses = _visible_courses_queryset(request)
 
     category_id = request.GET.get('category_id')
+    status = request.GET.get('status')
+
     if category_id:
         courses = courses.filter(categories__id=category_id)
+
+    if status:
+        courses = courses.filter(status=status)
 
     serializer = CourseListSerializer(courses, many=True)
     return Response(serializer.data)

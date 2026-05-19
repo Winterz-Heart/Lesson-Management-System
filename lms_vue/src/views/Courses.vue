@@ -22,7 +22,7 @@ export default {
     },
     async mounted() {
         await axios
-            .get('/api/v1/courses/')
+            .get('/api/v1/courses/?status=published')
             .then(response => {
                 this.courses = response.data
             })

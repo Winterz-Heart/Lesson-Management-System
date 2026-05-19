@@ -58,7 +58,7 @@ describe('Courses.vue', () => {
         mountCourses()
         await flushPromises()
 
-        expect(axios.get).toHaveBeenCalledWith('/api/v1/courses/')
+        expect(axios.get).toHaveBeenCalledWith('/api/v1/courses/?status=published')
         expect(axios.get).toHaveBeenCalledTimes(1)
     })
 

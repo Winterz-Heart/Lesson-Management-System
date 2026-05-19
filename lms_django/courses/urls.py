@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.get_courses),
     path('get_categories/', views.get_categories),
     path('get_frontpage_courses/', views.get_frontpage_courses),
-    path('get_author_courses/<int:user_id>/', views.get_author_courses),
+    path('get_teacher_courses/<int:user_id>/', views.get_teacher_courses),
 
     path('my_progress/', views.get_my_progress),
     path('<int:course_id>/start/', views.start_course),

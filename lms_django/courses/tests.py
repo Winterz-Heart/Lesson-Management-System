@@ -13,11 +13,11 @@ class CourseProgressModelTests(TestCase):
             first_name="Test",
             last_name="User",
         )
-        self.author = User.objects.create_user(
-            username="author",
+        self.teacher = User.objects.create_user(
+            username="teacher",
             password="testpass123",
             first_name="Course",
-            last_name="Author",
+            last_name="Teacher",
         )
         self.category = Category.objects.create(
             title="Python",
@@ -28,7 +28,7 @@ class CourseProgressModelTests(TestCase):
             slug="intro-to-django",
             short_description="Short",
             long_description="Long",
-            created_by=self.author,
+            created_by=self.teacher,
         )
         self.course.categories.add(self.category)
 
@@ -65,11 +65,11 @@ class CourseApiTests(TestCase):
             first_name="Test",
             last_name="User",
         )
-        self.author = User.objects.create_user(
-            username="author",
+        self.teacher = User.objects.create_user(
+            username="teacher",
             password="testpass123",
             first_name="Course",
-            last_name="Author",
+            last_name="Teacher",
         )
         self.category = Category.objects.create(
             title="Backend",
@@ -80,7 +80,7 @@ class CourseApiTests(TestCase):
             slug="rest-apis",
             short_description="API course",
             long_description="API course details",
-            created_by=self.author,
+            created_by=self.teacher,
         )
         self.course.categories.add(self.category)
 

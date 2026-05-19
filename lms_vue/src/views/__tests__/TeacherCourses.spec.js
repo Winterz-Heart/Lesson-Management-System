@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import axios from "axios";
-import AuthorCourses from "../AuthorCourses.vue";
+import TeacherCourses from "../TeacherCourses.vue";
 
 vi.mock('axios', () => ({
     default: {
@@ -9,7 +9,7 @@ vi.mock('axios', () => ({
     }
 }))
 
-describe('AuthorCourses.vue', () => {
+describe('TeacherCourses.vue', () => {
     const mockResponse = {
         created_by: {
             id: 12,
@@ -29,8 +29,8 @@ describe('AuthorCourses.vue', () => {
         axios.get.mockResolvedValue({ data: mockResponse })
     })
 
-    function mountAuthorCourses() {
-        return mount(AuthorCourses, {
+    function mountTeacherCourses() {
+        return mount(TeacherCourses, {
             global: {
                 mocks: {
                     $route: {
@@ -49,30 +49,30 @@ describe('AuthorCourses.vue', () => {
         })
     }
 
-    it('fetched author courses on mount', async () => {
-        mountAuthorCourses()
+    it('fetched teacher courses on mount', async () => {
+        mountTeacherCourses()
         await flushPromises()
 
-        expect(axios.get).toHaveBeenCalledWith('/api/v1/courses/get_author_courses/12/')
+        expect(axios.get).toHaveBeenCalledWith('/api/v1/courses/get_teacher_courses/12/')
         expect(axios.get).toHaveBeenCalledTimes(1)
     })
 
-    it('renders the author name in the page title', async () => {
-        const wrapper = mountAuthorCourses()
+    it('renders the teacher name in the page title', async () => {
+        const wrapper = mountTeacherCourses()
         await flushPromises()
 
         expect(wrapper.text()).toContain('Courses by John Doe')
     })
 
     it('passes fectched courses to CourseCardViewer', async () => {
-        const wrapper = mountAuthorCourses()
+        const wrapper = mountTeacherCourses()
         await flushPromises()
 
         expect(wrapper.find('.viewer-stub').text()).toContain('Viewer 3')
     })
 
     it('sets the document title on mount', async () => {
-        mountAuthorCourses()
+        mountTeacherCourses()
         await flushPromises()
 
         expect(document.title).toBe('Courses by John Doe | LMS')

@@ -13,7 +13,7 @@ from .serializers import (
     CourseProgressSerializer,
     CourseWriteSerializer,
     )
-from .permissions import IsAuthorOrAdmin
+from .permissions import IsTeacherOrAdmin
 from .models import Category, Course, CourseProgress
 
 def _get_user_role(user):
@@ -32,7 +32,7 @@ def _can_view_draft_course(request, course):
     
     return (
         request.user.is_authenticated and
-        _get_user_role(request.user) == 'author' and
+        _get_user_role(request.user) == 'teacher' and
         course.created_by_id == request.user.id
     )
 
@@ -42,7 +42,7 @@ def _visible_courses_queryset(request):
     if _is_admin(request.user):
         return courses
     
-    if request.user.is_authenticated and _get_user_role(request.user) == 'author':
+    if request.user.is_authenticated and _get_user_role(request.user) == 'teacher':
         return courses.filter(Q(status=Course.STATUS_PUBLISHED) | Q(created_by=request.user))
     
     return courses.filter(status=Course.STATUS_PUBLISHED)
@@ -81,12 +81,12 @@ def get_frontpage_courses(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def get_author_courses(request, user_id):
+def get_teacher_courses(request, user_id):
     user = User.objects.get(pk = user_id)
     
     if _is_admin(request.user):
         courses = user.courses.all().prefetch_related('categories')
-    elif request.user.is_authenticated and request.user.id == user_id and _get_user_role(request.user) == 'author':
+    elif request.user.is_authenticated and request.user.id == user_id and _get_user_role(request.user) == 'teacher':
         courses = user.courses.all().prefetch_related('categories')
     else:
         courses = user.courses.filter(status=Course.STATUS_PUBLISHED).prefecth_related('categories')
@@ -149,7 +149,7 @@ def get_course_progress(request, course_id):
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
 def teacher_create_course(request):
     serializer = CourseWriteSerializer(data=request.data)
     if serializer.is_valid():
@@ -158,7 +158,7 @@ def teacher_create_course(request):
     return Response(serializer.errors)
 
 @api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
 def teacher_edit_course(request, course_id):
     course = Course.objects.filter(id=course_id).first()
     if course is None:
@@ -174,7 +174,7 @@ def teacher_edit_course(request, course_id):
     return  Response(serializer.errors)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
 def teacher_publish_course(request, course_id):
     course = Course.objects.filter(id=course_id).first()
     if course is None:
@@ -189,7 +189,7 @@ def teacher_publish_course(request, course_id):
     return Response({'detail': 'Course published'})
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAuthorOrAdmin])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
 def teacher_unpublish_course(request, course_id):
     course = Course.objects.filter(id=course_id).first()
     if course is None:

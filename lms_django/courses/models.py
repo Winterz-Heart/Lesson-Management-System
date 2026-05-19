@@ -6,12 +6,12 @@ from django.dispatch import receiver
 
 class UserProfile(models.Model):
     ROLE_STUDENT = 'student'
-    ROLE_AUTHOR = 'author'
+    ROLE_TEACHER = 'teacher'
     ROLE_ADMIN = 'admin'
 
     ROLE_CHOICES = [
         (ROLE_STUDENT, 'Student'),
-        (ROLE_AUTHOR, 'Author'),
+        (ROLE_TEACHER, 'Teacher'),
         (ROLE_ADMIN, 'Admin'),
     ]
 

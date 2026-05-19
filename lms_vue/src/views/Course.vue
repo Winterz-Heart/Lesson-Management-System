@@ -5,7 +5,7 @@
                 <h1 class="title">{{ course.title }}</h1>
                 <br />
                 <router-link
-                    :to="{ name: 'author-courses', params: { user_id: course.created_by.id } }"
+                    :to="{ name: 'teacher-courses', params: { user_id: course.created_by.id } }"
                     class="subtitle"
                 >
                     By {{ course.created_by.first_name + " " + course.created_by.last_name }}

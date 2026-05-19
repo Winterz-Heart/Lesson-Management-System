@@ -80,7 +80,7 @@ describe('Course.vue', () => {
         expect(axios.get).toHaveBeenCalledTimes(2)
     })
 
-    it('renders the author name', async () => {
+    it('renders the teacher name', async () => {
         const wrapper = mountCourse()
         await  flushPromises()
 

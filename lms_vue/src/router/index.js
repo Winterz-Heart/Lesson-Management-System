@@ -10,7 +10,7 @@ import AccountStarted from '../views/dashboard/AccountStarted.vue'
 import AccountCompleted from '../views/dashboard/AccountCompleted.vue'
 
 import Courses from '../views/Courses.vue'
-import AuthorCourses from '../views/AuthorCourses.vue'
+import TeacherCourses from '../views/TeacherCourses.vue'
 import Course from '../views/Course.vue'
 
 const routes = [
@@ -45,9 +45,9 @@ const routes = [
     component: Course
   },
   {
-    path: '/authors/:user_id',
-    name: 'author-courses',
-    component: AuthorCourses
+    path: '/teachers/:user_id',
+    name: 'teacher-courses',
+    component: TeacherCourses
   },
   {
     path: '/dashboard/my-account',

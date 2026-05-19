@@ -36,8 +36,8 @@ export default createStore({
       state.user.isAuthenticated = false
     },
     setCurrentUser(state, payload) {
-      state.user.role = payload?.role || 'user'
-      state.user.groups = payload?.groups || []
+      state.user.role = payload?.role
+      state.user.groups = payload?.groups
     },
     clearCurrentUser(state) {
       state.user.role = 'user'

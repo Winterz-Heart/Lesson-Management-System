@@ -14,7 +14,7 @@ class UserSerializer(BaseUserSerializer):
         fields = ('id', 'username', 'first_name', 'last_name')
 
 class CurrentUserSerializer(BaseUserSerializer):
-    role = serializers.CharField(source='profile.role')
+    role = serializers.SerializerMethodField()
 
     class Meta(BaseUserSerializer.Meta):
         model = BaseUserSerializer.Meta.model
@@ -31,4 +31,4 @@ class CurrentUserSerializer(BaseUserSerializer):
         if 'teacher' in group_names:
             return 'teacher'
         
-        return 'user'
+        return 'student'

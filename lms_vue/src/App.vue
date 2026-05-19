@@ -25,6 +25,7 @@ export default {
 
     if (token) {
       axios.defaults.headers.common['Authorization'] = 'Token ' + token
+      this.$store.dispatch('fetchCurrentUser')
     } else {
       axios.defaults.headers.common['Authorization'] = ''
     }

@@ -11,13 +11,26 @@
 			role="navigation account"
 			aria-label="navigation"
 		>
-			<div id="navbar-item" class="navbar-menu">
-				<div class="navbar-start" >
-					<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
-					<router-link to="/dashboard/my-account/started" class="navbar-item">My Started Courses</router-link>
-					<router-link to="/dashboard/my-account/completed" class="navbar-item">My Finished Courses</router-link>
+			<template v-if="fetchCurrentUserRole === 'user'">
+				<div id="navbar-item" class="navbar-menu">
+					<div class="navbar-start" >
+						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
+						<router-link to="/dashboard/my-account/started" class="navbar-item">My Started Courses</router-link>
+						<router-link to="/dashboard/my-account/completed" class="navbar-item">My Finished Courses</router-link>
+					</div>
 				</div>
-			</div>
+			</template>
+
+			<template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin' ">
+				<div id="navbar-item" class="navbar-menu">
+					<div class="navbar-start" >
+						<router-link to="#" class="navbar-item">Course Creator</router-link>
+						<router-link to="#" class="navbar-item">Course Editor</router-link>
+						<router-link to="#" class="navbar-item">Draft Courses</router-link>
+						<router-link to="#" class="navbar-item">Published Courses</router-link>
+					</div>
+				</div>
+			</template>
 		</nav>
 
         <section class="section">
@@ -34,6 +47,11 @@
 export default {
   mounted() {
     document.title = "My Account | LMS";
+  },
+  computed: {
+	fetchCurrentUserRole() {
+		return this.$store.state.user.role
+	}
   },
 };
 </script>

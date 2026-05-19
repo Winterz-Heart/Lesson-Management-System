@@ -13,7 +13,9 @@ describe('Course.vue', () => {
     const mockCourse = {
         id: 1,
         title: 'Vue Basics',
+        short_description: 'Short desc',
         long_description: 'Learn the fundamentals of Vue step by step.',
+        status: 'draft',
         created_by: {
             id: 1,
             first_name: 'John',
@@ -33,7 +35,7 @@ describe('Course.vue', () => {
             .mockResolvedValueOnce({ data: mockProgress })
     })
 
-    function mountCourse(isAuthenticated = true) {
+    function mountCourse(isAuthenticated = true, role = 'student') {
         return mount(Course, {
             global: {
                 mocks: {
@@ -44,7 +46,7 @@ describe('Course.vue', () => {
                     },
                     $store: {
                         state: {
-                            user: { isAuthenticated }
+                            user: { isAuthenticated, role }
                         }
                     }
                 },
@@ -87,14 +89,15 @@ describe('Course.vue', () => {
         expect(wrapper.text()).toContain('By John Doe')
     })
 
-    it('shows the course description, state tag when authenticated', async () => {
+    it('shows the course description, state tag when authenticated student', async () => {
         const wrapper = mountCourse()
         await  flushPromises()
 
         expect(wrapper.text()).toContain('Not Started');
+        expect(wrapper.text()).not.toContain('Draft');
         expect(wrapper.text()).toContain('Click to start Course');
-        expect(wrapper.text()).toContain('Introduction')
-        expect(wrapper.text()).toContain('Learn the fundamentals of Vue step by step.')
+        expect(wrapper.text()).toContain('Introduction');
+        expect(wrapper.text()).toContain('Learn the fundamentals of Vue step by step.');
     })
 
     it('shows restricted access when not  authenticated', async () => {
@@ -104,5 +107,17 @@ describe('Course.vue', () => {
         expect(wrapper.text()).toContain('Restricted access')
         expect(wrapper.text()).toContain('You need to sign in to view courses')
         expect(wrapper.text()).not.toContain('Learn the fundamentals of Vue step by step.')
+    })
+
+    it('shows Published when course status is published', async () => {
+        axios.get.mockReset()
+        axios.get
+            .mockResolvedValueOnce({ data: { ...mockCourse, status: 'published' } })
+            .mockResolvedValueOnce({ data: mockProgress });
+
+        const wrapper = mountCourse(true, 'teacher');
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('Published');
     })
 })

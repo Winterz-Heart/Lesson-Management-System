@@ -14,7 +14,7 @@ vi.mock('axios', () => ({
     }
 }))
 
-describe('Logib.vue', () => {
+describe('Login.vue', () => {
     let store
     let router
 
@@ -23,7 +23,8 @@ describe('Logib.vue', () => {
         localStorage.clear()
 
         store = {
-            commit: vi.fn()
+            commit: vi.fn(),
+            dispatch: vi.fn().mockResolvedValue()
         }
 
         router = {
@@ -72,7 +73,7 @@ describe('Logib.vue', () => {
         expect(axios.post).not.toHaveBeenCalled()
     })
 
-    it('submits credentials, stores token and redirects on sucsess', async () => {
+    it('submits credentials, stores token and redirects on success', async () => {
         axios.post.mockResolvedValue({
             data: {
                 auth_token: 'test-token'
@@ -94,6 +95,7 @@ describe('Logib.vue', () => {
         })
 
         expect(store.commit).toHaveBeenCalledWith('setToken', 'test-token')
+        expect(store.dispatch).toHaveBeenCalledWith('fetchCurrentUser')
         expect(localStorage.getItem('token')).toBe('test-token')
         expect(axios.defaults.headers.common['Authorization']).toBe('Token test-token')
         expect(router.push).toHaveBeenCalledWith('/dashboard/my-account')

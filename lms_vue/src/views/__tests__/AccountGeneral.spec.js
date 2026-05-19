@@ -92,7 +92,7 @@ describe('AccountGeneral.vue', () => {
         await wrapper.find('button.button.is-danger').trigger('click');
         await flushPromises();
 
-        expect(axios.post).toHaveBeenCalledWith('/token/logout');
+        expect(axios.post).toHaveBeenCalledWith('/api/v1/token/logout/');
         expect(axios.defaults.headers.common['Authorization']).toBe('');
         expect(localStorage.getItem('token')).toBeNull();
         expect(store.commit).toHaveBeenCalledWith('removeToken');

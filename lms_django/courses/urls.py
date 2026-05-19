@@ -17,8 +17,6 @@ urlpatterns = [
     path('teacher/my_drafts/', views.get_my_draft_courses),
     path('teacher/my_published/', views.get_my_published_courses),
     path('teacher/<int:course_id>/edit/', views.teacher_edit_course),
-    path('teacher/<int:course_id>/publish/', views.teacher_publish_course),
-    path('teacher/<int:course_id>/unpublish/', views.teacher_unpublish_course),
 
     path('<slug:slug>/', views.get_course_details),
 ]

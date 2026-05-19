@@ -173,36 +173,6 @@ def teacher_edit_course(request, course_id):
         return Response(serializer.data)
     return  Response(serializer.errors)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
-def teacher_publish_course(request, course_id):
-    course = Course.objects.filter(id=course_id).first()
-    if course is None:
-        return Response({ 'detail': 'Not Found' })
-    
-    if not _is_admin(request.user) and course.created_by_id != request.user_id:
-        return Response({'detail': 'You do not have permission to publish this course'})
-    
-    course.status = Course.STATUS_PUBLISHED
-    course.published_at = timezone.now()
-    course.save()
-    return Response({'detail': 'Course published'})
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
-def teacher_unpublish_course(request, course_id):
-    course = Course.objects.filter(id=course_id).first()
-    if course is None:
-        return Response({ 'detail': 'Not Found' })
-    
-    if not _is_admin(request.user) and course.created_by_id != request.user_id:
-        return Response({'detail': 'You do not have permission to unpublish this course'})
-    
-    course.status = Course.STATUS_DRAFT
-    course.published_at = timezone.now()
-    course.save()
-    return Response({'detail': 'Course unpublished'})
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsTeacherOrAdmin])
 def get_my_draft_courses(request):

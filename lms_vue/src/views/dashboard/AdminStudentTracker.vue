@@ -31,7 +31,7 @@
                 >
                     Add Student to Course
                 </button>
-                <span v-if="addError" class="button is-danger " role="status">
+                <span v-if="addError" class="button is-danger ml-4" role="status">
                     {{ addError }}
                 </span>
             </div>
@@ -95,10 +95,16 @@
                                 <button
                                     v-if="course_progress.status === 'completed'"
                                     class="button is-small is-warning"
+                                    @click="markStarted(course_progress.id)"
                                 >
                                     Mark Started
                                 </button>
-                                <button class="button is-small is-danger">Remove</button>
+                                <button
+                                    class="button is-small is-danger"
+                                    @click="removeStudentFromCourse(course_progress.id)"
+                                >
+                                    Remove
+                                </button>
                             </td>
                         </tr>
 
@@ -152,7 +158,7 @@ export default {
 
             if (!this.addError) {
                 await axios
-                    .post('/api/v1/courses/admin/student-progress/create', {
+                    .post('/api/v1/courses/admin/student-progress/create/', {
                         user: this.selectedStudentID,
                         course: this.selectedCourseID
                     })
@@ -169,7 +175,8 @@ export default {
         markCompleted(progressId) {
             axios
                 .patch(`/api/v1/courses/admin/student-progress/update/${progressId}/`, {
-                    status: 'completed'
+                    status: 'completed',
+                    completed_at: new Date().toISOString(),
                 })
                 .then(() => {
                     return this.loadStudentProgress()
@@ -178,11 +185,29 @@ export default {
                     this.error = error?.response?.data?.detail || 'Could not mark course as completed.'
                 })
         },
-        markStarted() {
-
+        markStarted(progressId) {
+            axios
+                .patch(`/api/v1/courses/admin/student-progress/update/${progressId}/`, {
+                    status: 'started',
+                    started_at: new Date().toISOString(),
+                    completed_at: null
+                })
+                .then(() => {
+                    return this.loadStudentProgress()
+                })
+                .catch((error) => {
+                    this.error = error?.response?.data?.detail || 'Could not mark course as started.'
+                })
         },
-        removeStudentFromCourse() {
-
+        removeStudentFromCourse(progressId) {
+            axios
+                .delete(`/api/v1/courses/admin/student-progress/delete/${progressId}/`)
+                .then(() => {
+                    return this.loadStudentProgress()
+                })
+                .catch((error) => {
+                    this.error = error?.response?.data?.detail || 'Could not remove student from course.'
+                })
         },
     },
     computed: {

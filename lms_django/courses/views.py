@@ -12,6 +12,7 @@ from .serializers import (
     UserSerializer,
     CourseProgressSerializer,
     CourseWriteSerializer,
+    StudentCourseProgessSerializer
     )
 from .permissions import IsTeacherOrAdmin, IsAdmin
 from .models import Category, Course, CourseProgress
@@ -218,4 +219,13 @@ def get_admin_published_courses(request):
     ).prefetch_related('categories')
 
     serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
+def get_student_progress_table(request):
+    users = User.objects.filter(profile__role='student').prefetch_related(
+        'courses_progress__course__categories'
+    )
+    serializer = StudentCourseProgessSerializer(users, many=True)
     return Response(serializer.data)

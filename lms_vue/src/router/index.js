@@ -8,6 +8,7 @@ import MyAccount from '../views/dashboard/MyAccount.vue'
 import AccountGeneral from '../views/dashboard/AccountGeneral.vue'
 import AccountStarted from '../views/dashboard/AccountStarted.vue'
 import AccountCompleted from '../views/dashboard/AccountCompleted.vue'
+import StudentTracker from '../views/dashboard/StudentTracker.vue'
 import AccountDraftCourses from '../views/dashboard/AccountDraftCourses.vue'
 import AccountPublishedCourses from '../views/dashboard/AccountPublishedCourses.vue'
 import CourseCreator from '../views/dashboard/CourseCreator.vue'
@@ -75,6 +76,11 @@ const routes = [
         path: 'my-account/completed',
         name: 'my-account-completed',
         component: AccountCompleted
+      },
+      {
+        path: 'my-account/student-tracker',
+        name: 'my-account-student-tracker',
+        component: StudentTracker
       },
       {
         path: 'my-account/drafts',

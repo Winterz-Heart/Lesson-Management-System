@@ -25,6 +25,7 @@
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-start" >
 						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
+						<router-link to="/dashboard/my-account/student-tracker" class="navbar-item">Student Tracker</router-link>
 						<router-link to="/dashboard/my-account/course-create" class="navbar-item">Course Creator</router-link>
 						<router-link to="/dashboard/my-account/drafts" class="navbar-item">Draft Courses</router-link>
 						<router-link to="/dashboard/my-account/published" class="navbar-item">Published Courses</router-link>
@@ -37,7 +38,6 @@
 					<div class="navbar-end" >
 						<router-link to="/dashboard/admin/drafts" class="navbar-item">All Draft Courses</router-link>
 						<router-link to="/dashboard/admin/published" class="navbar-item">All Published Courses</router-link>
-						<router-link to="#" class="navbar-item">Student Tracker</router-link>
 						<router-link to="#" class="navbar-item">Role Adjustment</router-link>
 					</div>
 				</div>

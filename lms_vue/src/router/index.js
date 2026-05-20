@@ -14,9 +14,9 @@ import AccountPublishedCourses from '../views/dashboard/AccountPublishedCourses.
 import CourseCreator from '../views/dashboard/CourseCreator.vue'
 import CourseEditor from '../views/dashboard/CourseEditor.vue'
 
-import AdminDraftCourses from '../views/dashboard/AdminDraftCourses.vue'
-import AdminPublishedCourses from '../views/dashboard/AdminPublishedCourses.vue'
-import AdminStudentTracker from '../views/dashboard/AdminStudentTracker.vue'
+import AdminDraftCourses from '../views/dashboard/admin/AdminDraftCourses.vue'
+import AdminPublishedCourses from '../views/dashboard/admin/AdminPublishedCourses.vue'
+import AdminStudentTracker from '../views/dashboard/admin/AdminStudentTracker.vue'
 
 import Courses from '../views/Courses.vue'
 import TeacherCourses from '../views/TeacherCourses.vue'

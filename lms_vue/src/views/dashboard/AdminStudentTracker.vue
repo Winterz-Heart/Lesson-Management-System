@@ -24,10 +24,25 @@
                         {{ course.title }}
                     </option>
                 </select>
-                <button @click="addStudentToCourse()">Add Student to Course</button>
-                <span v-if="addError" class="notifcation is-danger">
+                <button
+                    class="button is-success is-small ml-4 mb-4"
+                    @click="addStudentToCourse()"
+                    
+                >
+                    Add Student to Course
+                </button>
+                <span v-if="addError" class="button is-danger " role="status">
                     {{ addError }}
                 </span>
+            </div>
+
+            <div class="notification is-danger" v-if="errors.length">
+                <p
+                    v-for="error in errors"
+                    v-bind:key="error"
+                >
+                    {{ error }}
+                </p>
             </div>
 
             <table class="table is-fullwidth is-hoverable" >
@@ -55,19 +70,34 @@
                             <td>{{ course_progress.course_title }}</td>
 
                             <td>
-                                <select>
-                                    <option>Not Started</option>
-                                    <option>Started</option>
-                                    <option>Completed</option>
-                                </select>
+                                <span
+                                class="tag"
+                                :class="{
+                                    'is-success': course_progress.status === 'completed',
+                                    'is-warning': course_progress.status === 'started'
+                                }"
+                                >
+                                {{ course_progress.status }}
+                                </span>
                             </td>
 
                             <td>{{ course_progress.started_at ? new Date(course_progress.started_at).toLocaleDateString() : '-' }}</td>
                             <td>{{ course_progress.completed_at ? new Date(course_progress.completed_at).toLocaleDateString() : '-' }}</td>
 
                             <td>
-                                <button>Mark Completed</button>
-                                <button>Remove</button>
+                                <button
+                                    v-if="course_progress.status === 'started'"
+                                    class="button is-small is-success"
+                                >
+                                    Mark Completed
+                                </button>
+                                <button
+                                    v-if="course_progress.status === 'completed'"
+                                    class="button is-small is-warning"
+                                >
+                                    Mark Started
+                                </button>
+                                <button class="button is-small is-danger">Remove</button>
                             </td>
                         </tr>
 
@@ -87,6 +117,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
@@ -96,10 +128,11 @@ export default {
             selectedStudentID: '',
             selectedCourseID: '',
             addError: '',
+            errors: [],
         }
     },
     methods: {
-        loadStudentProgress() {
+        async loadStudentProgress() {
             return axios
                 .get('/api/v1/courses/teacher/student-progress-table/')
                 .then(response => {
@@ -133,7 +166,16 @@ export default {
                 }
             },
         markCompleted() {
-            
+            axios
+                .patch(`/api/v1/courses/admin/student-progress/update/${progressId}/`, {
+                    status: 'completed'
+                })
+                .then(() => {
+                    return this.loadStudentProgress()
+                })
+                .catch((error) => {
+                    this.error = error?.response?.data?.detail || 'Could not mark course as completed.'
+                })
         },
         removeCourse() {
 
@@ -159,3 +201,10 @@ export default {
     }
 }
 </script>
+
+<style>
+.button[role='status'] {
+    pointer-events: none;
+    cursor: default;
+}
+</style>

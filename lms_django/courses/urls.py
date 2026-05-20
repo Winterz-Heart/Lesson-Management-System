@@ -21,9 +21,9 @@ urlpatterns = [
 
     path('admin/drafts/', views.get_admin_draft_courses),
     path('admin/published/', views.get_admin_published_courses),
-    path('admin/student-progress/create', views.admin_assign_student_to_course),
-    path('admin/student-progress/update', views.admin_update_progress),
-    path('admin/student-progress/delete', views.admin_remove_student_from_course),
+    path('admin/student-progress/create/', views.admin_assign_student_to_course),
+    path('admin/student-progress/update/<int:progress_id>/', views.admin_update_progress),
+    path('admin/student-progress/delete/<int:progress_id>/', views.admin_remove_student_from_course),
 
     path('<slug:slug>/', views.get_course_details),
 ]

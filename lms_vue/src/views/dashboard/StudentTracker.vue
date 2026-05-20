@@ -15,39 +15,35 @@
                 </thead>
 
                 <tbody>
-                    <template
-                        v-for="student in students" 
-                        v-bind:key="student.id"
-                    >
-                        <template v-if="student.courses_progress.length > 0" >
-                            <tr
-                                v-for="course_progress in student.courses_progress"
-                                v-bind:key="course_progress.id"
-                            >
-                                <td>{{ student.first_name }} {{ student.last_name }}</td>
-                                <td>{{ course_progress.course_title }}</td>
-                                <td>
-                                    <span
-                                        class="tag"
-                                        :class="{
-                                            'is-success': course_progress.status === 'completed',
-                                            'is-warning': course_progress.status === 'started'
-                                        }"
-                                    >
-                                        {{ course_progress.status }}
-                                    </span>
-                                </td>
-                                <td>{{ course_progress.started_at ? new Date(course_progress.started_at).toLocaleDateString() : '-' }}</td>
-                                <td>{{ course_progress.completed_at ? new Date(course_progress.completed_at).toLocaleDateString() : '-' }}</td>
-                            </tr>
-                        </template>
+                    <template v-for="student in students" :key="student.id">
+                        <tr
+                        v-for="(course_progress, index) in student.courses_progress"
+                        :key="course_progress.id"
+                        >
+                            <td v-if="index === 0" :rowspan="student.courses_progress.length">
+                                {{ student.first_name }} {{ student.last_name }}
+                            </td>
 
-                        <template v-else>
-                            <tr>
-                                <td>{{ student.first_name }} {{ student.last_name }}</td>
-                                <td colspan="4">No courses enrolled</td>
-                            </tr>
-                        </template>
+                            <td>{{ course_progress.course_title }}</td>
+                            <td>
+                                <span
+                                class="tag"
+                                :class="{
+                                    'is-success': course_progress.status === 'completed',
+                                    'is-warning': course_progress.status === 'started'
+                                }"
+                                >
+                                {{ course_progress.status }}
+                                </span>
+                            </td>
+                            <td>{{ course_progress.started_at ? new Date(course_progress.started_at).toLocaleDateString() : '-' }}</td>
+                            <td>{{ course_progress.completed_at ? new Date(course_progress.completed_at).toLocaleDateString() : '-' }}</td>
+                        </tr>
+
+                        <tr v-if="student.courses_progress.length === 0">
+                            <td>{{ student.first_name }} {{ student.last_name }}</td>
+                            <td colspan="4">No courses enrolled</td>
+                        </tr>
                     </template>
                 </tbody>
             </table>

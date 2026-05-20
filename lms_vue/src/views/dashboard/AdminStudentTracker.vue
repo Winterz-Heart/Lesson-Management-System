@@ -88,6 +88,7 @@
                                 <button
                                     v-if="course_progress.status === 'started'"
                                     class="button is-small is-success"
+                                    @click="markCompleted(course_progress.id)"
                                 >
                                     Mark Completed
                                 </button>
@@ -165,7 +166,7 @@ export default {
                     })
                 }
             },
-        markCompleted() {
+        markCompleted(progressId) {
             axios
                 .patch(`/api/v1/courses/admin/student-progress/update/${progressId}/`, {
                     status: 'completed'
@@ -177,7 +178,10 @@ export default {
                     this.error = error?.response?.data?.detail || 'Could not mark course as completed.'
                 })
         },
-        removeCourse() {
+        markStarted() {
+
+        },
+        removeStudentFromCourse() {
 
         },
     },

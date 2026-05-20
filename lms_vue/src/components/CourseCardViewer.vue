@@ -10,7 +10,7 @@
                         </li>
 
                         <li
-                            v-for="category in visibleCategories"
+                            v-for="category in allCategories"
                             v-bind:key="category.id"
                             @click="setActiveCategory(category)"
                         >
@@ -107,10 +107,10 @@ export default {
                 return courseCategories.some(cat => cat.id === this.activeCategory.id)
             })
         },
-        visibleCategories() {
+        allCategories() {
             const categoryMap = new Map()
-
-            this.filteredCourses.forEach(course => {
+            
+            this.courses.forEach(course => {
                 const courseCategories = Array.isArray(course.categories) ? course.categories : []
                 courseCategories.forEach(cat => {
                     if (cat && cat.id != null && !categoryMap.has(cat.id)) {

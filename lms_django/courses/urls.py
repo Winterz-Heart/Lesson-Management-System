@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/student-progress/create/', views.admin_assign_student_to_course),
     path('admin/student-progress/update/<int:progress_id>/', views.admin_update_progress),
     path('admin/student-progress/delete/<int:progress_id>/', views.admin_remove_student_from_course),
+    path('admin/users/roles/', views.get_all_users_with_roles),
 
     path('<slug:slug>/', views.get_course_details),
 ]

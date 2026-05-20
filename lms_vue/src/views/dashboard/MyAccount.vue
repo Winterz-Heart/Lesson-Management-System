@@ -42,7 +42,7 @@
 								<router-link to="/dashboard/admin/drafts" class="navbar-item">All Draft Courses</router-link>
 								<router-link to="/dashboard/admin/published" class="navbar-item">All Published Courses</router-link>
 								<router-link to="/dashboard/admin/student-tracker" class="navbar-item">Adjust Student Progress</router-link>
-								<router-link to="#" class="navbar-item">Role Adjustment</router-link>
+								<router-link to="/dashboard/admin/role-adjustor" class="navbar-item">Role Adjustment</router-link>
 							</div>
 						</div>
 					</div>

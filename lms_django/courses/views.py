@@ -275,3 +275,20 @@ def teacher_delete_course(request, course_id):
     
     course.delete()
     return Response()
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def get_all_users_with_roles(request):
+    users = User.objects.select_related('profile').all()
+    data = [
+        {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.username,
+            'role': user.profile.role
+        }
+        for user in users
+    ]
+
+    return Response(data)

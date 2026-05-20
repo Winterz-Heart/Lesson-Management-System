@@ -26,6 +26,11 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         model = Course
         fields = ('id', 'title', 'slug', 'short_description', 'long_description', 'created_by', 'status', 'categories')
 
+class CourseProgressCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseProgress
+        fields = ('id', 'user', 'course', 'status')
+
 class CourseProgressSerializer(serializers.ModelSerializer):
     course_title = serializers.CharField(source='course.title')
     course_slug = serializers.CharField(source='course.slug')

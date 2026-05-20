@@ -11,6 +11,7 @@ from .serializers import (
     CourseDetailSerializer,
     UserSerializer,
     CourseProgressSerializer,
+    CourseProgressCreateSerializer,
     CourseWriteSerializer,
     StudentCourseProgessSerializer
     )
@@ -229,3 +230,37 @@ def get_student_progress_table(request):
     )
     serializer = StudentCourseProgessSerializer(users, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_assign_student_to_course(request):
+    serializer = CourseProgressCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        progress = serializer.save()
+        progress.mark_started()
+        progress.save()
+        return Response(CourseProgressSerializer(progress).data)
+    return Response(serializer.errors)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_update_progress(request, progress_id):
+    progress  = CourseProgress.objects.filter(id=progress_id).first()
+    serializer = CourseProgressSerializer(progress, data=request.data, partial=True)
+    if progress is None:
+        return Response({'detail': 'Not found.'})
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_remove_student_from_course(request, progress_id):
+    progress = CourseProgress.objects.filter(id=progress_id).first()
+    if progress is None:
+        return Response({'detail': 'Not found.'})
+    
+    progress.delete()
+    return Response()

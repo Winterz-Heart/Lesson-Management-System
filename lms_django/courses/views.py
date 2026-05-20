@@ -13,7 +13,7 @@ from .serializers import (
     CourseProgressSerializer,
     CourseWriteSerializer,
     )
-from .permissions import IsTeacherOrAdmin
+from .permissions import IsTeacherOrAdmin, IsAdmin
 from .models import Category, Course, CourseProgress
 
 def _get_user_role(user):
@@ -195,6 +195,26 @@ def get_my_published_courses(request):
     courses = Course.objects.filter(
         created_by = request.user,
         status=Course.STATUS_PUBLISHED
+    ).prefetch_related('categories')
+
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def get_admin_draft_courses(request):
+    courses = Course.objects.filter(
+        status=Course.STATUS_DRAFT
+    ).prefetch_related('categories')
+
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def get_admin_published_courses(request):
+    courses = Course.objects.filter(
+        status=Course.STATUS_DRAFT
     ).prefetch_related('categories')
 
     serializer = CourseListSerializer(courses, many=True)

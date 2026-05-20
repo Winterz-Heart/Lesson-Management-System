@@ -214,7 +214,7 @@ def get_admin_draft_courses(request):
 @permission_classes([IsAuthenticated, IsAdmin])
 def get_admin_published_courses(request):
     courses = Course.objects.filter(
-        status=Course.STATUS_DRAFT
+        status=Course.STATUS_PUBLISHED
     ).prefetch_related('categories')
 
     serializer = CourseListSerializer(courses, many=True)

@@ -14,6 +14,7 @@ import CourseCreator from '../views/dashboard/CourseCreator.vue'
 import CourseEditor from '../views/dashboard/CourseEditor.vue'
 
 import AdminDraftCourses from '../views/dashboard/AdminDraftCourses.vue'
+import AdminPublishedCourses from '../views/dashboard/AdminPublishedCourses.vue'
 
 import Courses from '../views/Courses.vue'
 import TeacherCourses from '../views/TeacherCourses.vue'
@@ -99,6 +100,11 @@ const routes = [
         path: 'admin/drafts',
         name: 'admin-drafts',
         component: AdminDraftCourses
+      },
+      {
+        path: 'admin/published',
+        name: 'admin-published',
+        component: AdminPublishedCourses
       },
     ]
   },

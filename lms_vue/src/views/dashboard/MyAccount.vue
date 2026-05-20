@@ -35,8 +35,8 @@
 			<template v-if="fetchCurrentUserRole === 'admin' ">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-end" >
-						<router-link to="#" class="navbar-item">All Draft Courses</router-link>
-						<router-link to="#" class="navbar-item">All Published Courses</router-link>
+						<router-link to="/dashboard/admin/drafts" class="navbar-item">All Draft Courses</router-link>
+						<router-link to="/dashboard/admin/published" class="navbar-item">All Published Courses</router-link>
 					</div>
 				</div>
 			</template>

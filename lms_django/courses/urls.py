@@ -17,7 +17,9 @@ urlpatterns = [
     path('teacher/my_drafts/', views.get_my_draft_courses),
     path('teacher/my_published/', views.get_my_published_courses),
     path('teacher/<int:course_id>/edit/', views.teacher_edit_course),
+    path('teacher/<int:course_id>/delete/', views.teacher_delete_course),
     path('teacher/student-progress-table/', views.get_student_progress_table),
+
 
     path('admin/drafts/', views.get_admin_draft_courses),
     path('admin/published/', views.get_admin_published_courses),

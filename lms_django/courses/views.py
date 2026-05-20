@@ -264,3 +264,14 @@ def admin_remove_student_from_course(request, progress_id):
     
     progress.delete()
     return Response()
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
+def teacher_delete_course(request, course_id):
+    course = Course.objects.filter(id=course_id)
+
+    if not _is_admin(request.user) and course.created_by_id != request.user.id:
+        return Response({'detail': 'You do not have permission to delete this course'})
+    
+    course.delete()
+    return Response()

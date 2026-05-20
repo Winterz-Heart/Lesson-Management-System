@@ -48,6 +48,7 @@
                 <div class="field buttons">
                     <button type="button" class="button is-info" @click="submitForm('draft')">Save as Draft</button>
                     <button type="button" class="button is-info" @click="submitForm('published')">Publish</button>
+                    <button type="button" class="button is-danger" @click="deleteCourse()">Delete Course</button>
                 </div>
             </form>
         </template>
@@ -117,6 +118,33 @@ export default {
                 })
                 .catch((error) => {
                     console.log(error)
+                })
+        },
+        async deleteCourse() {
+            const confirmed = window.confirm(
+                'Are you sure you wish to delete this course? This action cannot be undone.'
+            )
+
+            if (!confirmed) return
+
+            await axios
+                .delete(`/api/v1/courses/teacher/${this.course_id}/delete/`)
+                .then(() => {
+                    if (this.fetchCurrentUserRole === 'teacher') {
+                        const redirect = this.form.status === 'published'
+                        ? '/dashboard/my-account/drafts'
+                        : '/dashboard/my-account/published'
+
+                        this.$router.push(redirect)
+                    }
+
+                    if (this.fetchCurrentUserRole === 'admin') {
+                        const redirect = this.form.status === 'published'
+                        ? '/dashboard/admin/drafts'
+                        : '/dashboard/admin/published'
+
+                        this.$router.push(redirect)
+                    }
                 })
         },
         slugify(title) {

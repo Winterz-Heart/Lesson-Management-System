@@ -36,9 +36,15 @@
 			<template v-if="fetchCurrentUserRole === 'admin' ">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-end" >
-						<router-link to="/dashboard/admin/drafts" class="navbar-item">All Draft Courses</router-link>
-						<router-link to="/dashboard/admin/published" class="navbar-item">All Published Courses</router-link>
-						<router-link to="#" class="navbar-item">Role Adjustment</router-link>
+						<div class="navbar-item has-dropdown is-hoverable">
+							<a class="navbar-link">Admin</a>
+							<div class="navbar-dropdown is-right">
+								<router-link to="/dashboard/admin/drafts" class="navbar-item">All Draft Courses</router-link>
+								<router-link to="/dashboard/admin/published" class="navbar-item">All Published Courses</router-link>
+								<router-link to="/dashboard/admin/student-tracker" class="navbar-item">Adjust Student Progress</router-link>
+								<router-link to="#" class="navbar-item">Role Adjustment</router-link>
+							</div>
+						</div>
 					</div>
 				</div>
 			</template>

@@ -13,9 +13,10 @@
                             <input
                                 type="checkbox"
                                 :value="category.id"
-                                v-model="form.categories"
+                                v-model="selectedCategories"
+                                :id="'cat-' + category.id"
                             >
-                                {{ category.title }}
+                                <label :for="'cat-' + category.id"> | {{ category.title }}</label>
                             </input>
                         </label>
                     </div>
@@ -64,6 +65,7 @@ export default {
     data() {
         return {
             course_id: null,
+            course_slug: '',
             orginalSlug: '',
             form: {
                 title: '',
@@ -73,11 +75,12 @@ export default {
                 status: '',
             },
             categories: [],
+            selectedCategories: [],
             errors: [],
         }
     },
     async mounted() {
-        this.course_id  =this.$route.params.course_id
+        this.course_slug  =this.$route.params.slug
         await this.getCategories()
         await this.getCourseDetails()
     },
@@ -99,17 +102,16 @@ export default {
         },
         async getCourseDetails() {
             await axios
-                .get('/api/v1/courses/')
+                .get(`/api/v1/courses/${this.course_slug}`)
                 .then(response => {
-                    const course = response.data.find(
-                        (item) => String(item.id) === String(this.course_id)
-                    )
+                    const course = response.data
 
+                    this.course_id = course.id
                     this.form.title = course.title
                     this.form.short_description = course.short_description
                     this.form.long_description = course.long_description
-                    this.form.categories = Array.isArray(course.categories)
-                        ? course.categories.map((cat) => cat.id)
+                    this.selectedCategories = Array.isArray(course.categories)
+                        ? course.categories.map((cat) => (typeof cat === 'object' ? cat.id : cat))
                         : []
                     this.orginalSlug = course.slug
                 })
@@ -124,10 +126,12 @@ export default {
         },
         async submitForm(status) {
             this.errors = []
+            this.form.categories = [...this.selectedCategories]
 
             const slugifyed = this.slugify(this.form.title)
             const existingSlugs = await axios.get('api/v1/courses/')
-            const isDupe = existingSlugs.data.some(
+            const slugChanged = slugifyed !== this.orginalSlug
+            const isDupe = slugChanged && existingSlugs.data.some(
                 (course) => course.slug === slugifyed && String(course.id) !== String(this.course_id)
             )
 

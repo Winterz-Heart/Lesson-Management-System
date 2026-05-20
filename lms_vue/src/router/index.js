@@ -91,7 +91,7 @@ const routes = [
         component: CourseCreator
       },
       {
-        path: 'my-account/course-edit/:course_id',
+        path: 'my-account/course-edit/:slug',
         name: 'my-account-course-edit',
         component: CourseEditor
       },

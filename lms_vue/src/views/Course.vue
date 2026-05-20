@@ -49,8 +49,8 @@
                                     <p class="tag is-info ml-auto">{{ pubOrDraft }}</p>
                                     <template v-if="course.id && (isCreator || fetchCurrentUserRole === 'admin')">
                                         <router-link
-                                        class="tag is-info"
-                                        :to="{ name: 'my-account-course-edit', params: { course_id: course.id } }"
+                                            class="tag is-info"
+                                            :to="{ name: 'my-account-course-edit', params: { slug: course.slug } }"
                                         >
                                             Click to Edit
                                         </router-link>
@@ -79,27 +79,7 @@ import axios from 'axios';
 
 export default {
     async mounted() {
-        const slug = this.$route.params.slug;
-
-        await axios
-            .get(`api/v1/courses/${slug}/`)
-            .then(response => {
-                this.course = response.data
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-
-        await axios
-            .get(`api/v1/courses/${this.course.id}/course_progress/`)
-            .then(response => {
-                this.progress = response.data
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-
-        document.title = this.course.title + ' | LMS'
+        await this.loadCourse()
     },
     data() {
         return {
@@ -114,6 +94,33 @@ export default {
         }
     },
     methods: {
+        async loadCourse() {
+            const slug = this.$route.params.slug
+
+            await axios
+                .get(`/api/v1/courses/${slug}/`)
+                .then(response => {
+                    this.course = response.data
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+
+            if (!this.course.id) {
+                return
+            }
+
+            await axios
+                .get(`/api/v1/courses/${this.course.id}/course_progress/`)
+                .then(response => {
+                    this.progress = response.data
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+
+            document.title = this.course.title + ' | LMS'
+        },
         async markStarted() {
             try {
                 const response = await axios.post(`api/v1/courses/${this.course.id}/start/`)

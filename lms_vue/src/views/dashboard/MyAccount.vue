@@ -31,6 +31,15 @@
 					</div>
 				</div>
 			</template>
+
+			<template v-if="fetchCurrentUserRole === 'admin' ">
+				<div id="navbar-item" class="navbar-menu">
+					<div class="navbar-end" >
+						<router-link to="#" class="navbar-item">All Draft Courses</router-link>
+						<router-link to="#" class="navbar-item">All Published Courses</router-link>
+					</div>
+				</div>
+			</template>
 		</nav>
 
         <section class="section">

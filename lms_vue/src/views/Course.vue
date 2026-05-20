@@ -47,7 +47,7 @@
 
                                 <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
                                     <p class="tag is-info ml-auto">{{ pubOrDraft }}</p>
-                                    <template v-if="isCreator">
+                                    <template v-if="course.id && (isCreator || fetchCurrentUserRole === 'admin')">
                                         <router-link
                                         class="tag is-info"
                                         :to="{ name: 'my-account-course-edit', params: { course_id: course.id } }"

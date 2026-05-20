@@ -18,7 +18,11 @@ class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated and 
-            request.user.profile.role == 'admin'
+            (
+                request.user.is_staff or
+                request.user.is_superuser or
+                request.user.profile.role == 'admin'
+            )
         )
     
 class IsTeacherOrAdmin(BasePermission):

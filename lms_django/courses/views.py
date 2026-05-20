@@ -169,7 +169,7 @@ def teacher_edit_course(request, course_id):
     if course is None:
         return Response({ 'detail': 'Not Found' })
     
-    if not _is_admin(request.user) and course.created_by_id != request.user_id:
+    if not _is_admin(request.user) and course.created_by_id != request.user.id:
         return Response({'detail': 'You do not have permission to edit this course'})
     
     serializer = CourseWriteSerializer(course, data=request.data, partial=True)

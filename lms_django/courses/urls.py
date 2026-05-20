@@ -18,8 +18,8 @@ urlpatterns = [
     path('teacher/my_published/', views.get_my_published_courses),
     path('teacher/<int:course_id>/edit/', views.teacher_edit_course),
 
-    path('admin/drafts', views.get_admin_draft_courses),
-    path('admin/published', views.get_admin_published_courses),
+    path('admin/drafts/', views.get_admin_draft_courses),
+    path('admin/published/', views.get_admin_published_courses),
 
     path('<slug:slug>/', views.get_course_details),
 ]

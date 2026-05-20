@@ -13,6 +13,8 @@ import AccountPublishedCourses from '../views/dashboard/AccountPublishedCourses.
 import CourseCreator from '../views/dashboard/CourseCreator.vue'
 import CourseEditor from '../views/dashboard/CourseEditor.vue'
 
+import AdminDraftCourses from '../views/dashboard/AdminDraftCourses.vue'
+
 import Courses from '../views/Courses.vue'
 import TeacherCourses from '../views/TeacherCourses.vue'
 import Course from '../views/Course.vue'
@@ -54,44 +56,49 @@ const routes = [
     component: TeacherCourses
   },
   {
-    path: '/dashboard/my-account',
+    path: '/dashboard',
     name: 'my-account',
     component: MyAccount,
     children: [
       {
-        path: '',
+        path: 'my-account',
         name: 'my-account-general',
         component: AccountGeneral
       },
       {
-        path: 'started',
+        path: 'my-account/started',
         name: 'my-account-started',
         component: AccountStarted
       },
       {
-        path: 'completed',
+        path: 'my-account/completed',
         name: 'my-account-completed',
         component: AccountCompleted
       },
       {
-        path: 'drafts',
+        path: 'my-account/drafts',
         name: 'my-account-drafts',
         component: AccountDraftCourses
       },
       {
-        path: 'published',
+        path: 'my-account/published',
         name: 'my-account-published',
         component: AccountPublishedCourses
       },
       {
-        path: 'course-create',
+        path: 'my-account/course-create',
         name: 'my-account-course-create',
         component: CourseCreator
       },
       {
-        path: 'course-edit',
+        path: 'my-account/course-edit/:course_id',
         name: 'my-account-course-edit',
         component: CourseEditor
+      },
+      {
+        path: 'admin/drafts',
+        name: 'admin-drafts',
+        component: AdminDraftCourses
       },
     ]
   },

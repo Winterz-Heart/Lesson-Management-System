@@ -77,7 +77,7 @@ export default {
         }
     },
     async mounted() {
-        this.course_id  =this.$routes.params.course_id
+        this.course_id  =this.$route.params.course_id
         await this.getCategories()
         await this.getCourseDetails()
     },
@@ -99,7 +99,7 @@ export default {
         },
         async getCourseDetails() {
             await axios
-                .get('/api/v1/courses')
+                .get('/api/v1/courses/')
                 .then(response => {
                     const course = response.data.find(
                         (item) => String(item.id) === String(this.course_id)
@@ -111,7 +111,7 @@ export default {
                     this.form.categories = Array.isArray(course.categories)
                         ? course.categories.map((cat) => cat.id)
                         : []
-                    this.form.orginalSlug = course.slug
+                    this.orginalSlug = course.slug
                 })
                 .catch((error) => {
                     console.log(error)

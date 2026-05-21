@@ -44,11 +44,29 @@
                                 </td>
 
                                 <td>
-                                    {{ course.status }}
+                                    <div class="is-flex is-align-items-center">
+                                        {{ course.status }}
+                                        <button
+                                            v-if="course.status === 'draft'"
+                                            class="button is-success is-small ml-auto"
+                                            @click="changeCourseStatus(course, 'published')"
+                                        >
+                                            Publish
+                                        </button>
+                                        <button
+                                            v-if="course.status === 'published'"
+                                            class="button is-warning is-small ml-auto"
+                                            @click="changeCourseStatus(course, 'draft')"
+                                        >
+                                            Mark as Draft
+                                        </button>
+                                    </div>
                                 </td>
 
                                 <td>
-                                    {{ course.created_by.first_name }}  {{ course.created_by.last_name }}
+                                    <router-link :to="{ name: 'teacher-courses', params: { user_id: course.created_by.id } }">
+                                        {{ course.created_by.first_name }}  {{ course.created_by.last_name }}
+                                    </router-link>
                                 </td>
 
                                 <td>
@@ -93,6 +111,18 @@ export default {
                 .then(response => {
                     this.courses = response.data
                     this.categories = [...new Set(this.courses.map(course => course.category))]
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        async changeCourseStatus(course, newStatus){
+            await axios
+                .patch(`/api/v1/courses/teacher/${course.id}/edit/`, {
+                    status: newStatus
+                })
+                .then(() => {
+                    this.loadCourses()
                 })
                 .catch((error) => {
                     console.log(error)

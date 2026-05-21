@@ -108,7 +108,7 @@ def get_teacher_courses(request, user_id):
     elif request.user.is_authenticated and request.user.id == user_id and _get_user_role(request.user) == 'Teacher':
         courses = user.courses.all().prefetch_related('categories')
     else:
-        courses = user.courses.filter(status=Course.STATUS_PUBLISHED).prefecth_related('categories')
+        courses = user.courses.filter(status=Course.STATUS_PUBLISHED).prefetch_related('categories')
 
     user_serializer = UserSerializer(user, many=False)
     courses_serializer = CourseListSerializer(courses, many=True)

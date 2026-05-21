@@ -3,93 +3,95 @@
         <h2 class="title is-size-4">All Courses</h2>
 
         <template v-if="fetchCurrentUserRole === 'Admin'">
-            <section class="section">
-                <table class="table is-fullwidth is-hoverable is-striped">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Course Title</th>
-                            <th>Status</th>
-                            <th>Created By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <template
-                            v-for="group in groupedCourses"
-                            :key="group.categoryKey"
-                        >
-                            <tr
-                                v-for="(course, index) in group.courses"
-                                :key="`${group.categoryKey}-${course.id}`"
-                            >
-                                <td v-if="index === 0" :rowspan="group.courses.length">
-                                    <div>
-                                        <span>{{ group.categoryTitle }}</span>
-                                        <br />
-                                        <button
-                                            class="button is-small is-danger mt-4"
-                                            @click="deleteCategory(group)"
-                                        >
-                                            Delete Category
-                                        </button>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <router-link :to="{ name: 'course', params: { slug: course.slug} }">
-                                        {{ course.title }}
-                                    </router-link>
-                                </td>
-
-                                <td>
-                                    <div class="is-flex is-align-items-center">
-                                        {{ course.status }}
-                                        <button
-                                            v-if="course.status === 'draft'"
-                                            class="button is-success is-small ml-auto"
-                                            @click="changeCourseStatus(course, 'published')"
-                                        >
-                                            Publish
-                                        </button>
-                                        <button
-                                            v-if="course.status === 'published'"
-                                            class="button is-warning is-small ml-auto"
-                                            @click="changeCourseStatus(course, 'draft')"
-                                        >
-                                            Mark as Draft
-                                        </button>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <router-link :to="{ name: 'teacher-courses', params: { user_id: course.created_by.id } }">
-                                        {{ course.created_by.first_name }}  {{ course.created_by.last_name }}
-                                    </router-link>
-                                </td>
-
-                                <td>
-                                    <button
-                                        class="button is-danger is-small"
-                                        @click="deleteCourse(course)"
-                                    >
-                                        Delete Course
-                                    </button>
-                                </td>
+            <template v-if="courses.length > 0">
+                <section class="section">
+                    <table class="table is-fullwidth is-hoverable is-striped">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Course Title</th>
+                                <th>Status</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </section>
-        </template>
+                        </thead>
 
-        <template v-else-if="courses.length === 0 && fetchCurrentUserRole === 'Admin'">
-            <p>No Courses have been made</p>
+                        <tbody>
+                            <template
+                                v-for="group in groupedCourses"
+                                :key="group.categoryKey"
+                            >
+                                <tr
+                                    v-for="(course, index) in group.courses"
+                                    :key="`${group.categoryKey}-${course.id}`"
+                                >
+                                    <td v-if="index === 0" :rowspan="group.courses.length">
+                                        <div>
+                                            <span>{{ group.categoryTitle }}</span>
+                                            <br />
+                                            <button
+                                                class="button is-small is-danger mt-4"
+                                                @click="deleteCategory(group)"
+                                            >
+                                                Delete Category
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <router-link :to="{ name: 'course', params: { slug: course.slug} }">
+                                            {{ course.title }}
+                                        </router-link>
+                                    </td>
+
+                                    <td>
+                                        <div class="is-flex is-align-items-center">
+                                            {{ course.status }}
+                                            <button
+                                                v-if="course.status === 'draft'"
+                                                class="button is-success is-small ml-auto"
+                                                @click="changeCourseStatus(course, 'published')"
+                                            >
+                                                Publish
+                                            </button>
+                                            <button
+                                                v-if="course.status === 'published'"
+                                                class="button is-warning is-small ml-auto"
+                                                @click="changeCourseStatus(course, 'draft')"
+                                            >
+                                                Mark as Draft
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <router-link :to="{ name: 'teacher-courses', params: { user_id: course.created_by.id } }">
+                                            {{ course.created_by.first_name }}  {{ course.created_by.last_name }}
+                                        </router-link>
+                                    </td>
+
+                                    <td>
+                                        <button
+                                            class="button is-danger is-small"
+                                            @click="deleteCourse(course)"
+                                        >
+                                            Delete Course
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+            </template>
+
+            <template v-else>
+                <p>No Courses have been made</p>
+            </template>
         </template>
 
         <template v-else>
-            <p>Yoo do not have permission to view this page</p>
+            <p>You do not have permission to view this page</p>
         </template>
     </div>
 </template>

@@ -6,6 +6,7 @@ import CourseEditor from "../dashboard/CourseEditor.vue";
 vi.mock('axios', () => ({
     default: {
         get: vi.fn(),
+        post: vi.fn(),
         patch: vi.fn()
     }
 }))
@@ -74,6 +75,7 @@ describe('CourseEditor.vue', () => {
         }
         })
         .mockResolvedValueOnce({ data: [] })
+        .mockResolvedValueOnce({ data: [] })
 
         const wrapper = mountCourseEditor('Teacher');
         await flushPromises();
@@ -103,6 +105,7 @@ describe('CourseEditor.vue', () => {
                 }
             })
             .mockResolvedValueOnce({ data: [{ id: 2, slug: 'other-course' }] })
+            .mockResolvedValueOnce({ data: [{ id: 2, slug: 'other-course' }] })
 
         axios.patch.mockResolvedValueOnce({ data: { slug: 'vue-basics' } });
 
@@ -131,4 +134,62 @@ describe('CourseEditor.vue', () => {
         )
         expect(push).toHaveBeenCalledWith('/courses/vue-basics');
     });
+
+    it('creates a new category, attaches it to course and redirects', async () => {
+        axios.get
+            .mockResolvedValueOnce({ data: [{ id: 1, title: 'Frontend', slug: 'frontend' }] })
+            .mockResolvedValueOnce({ 
+                data: {
+                    id: 1,
+                    title: 'Old Title',
+                    short_description: 'Old short',
+                    long_description: 'Old long',
+                    categories: [{ id: 1, title: 'Frontend' }],
+                    slug: 'old-title'
+                }
+            })
+            .mockResolvedValueOnce({ data: [{ slug: 'other-course' }] })
+            .mockResolvedValueOnce({ data: [{ id: 1, title: 'Frontend', slug: 'frontend' }] })
+
+        axios.post
+            .mockResolvedValueOnce({ data: { id: 99, title: 'Backend', slug: 'backend' } })
+
+        axios.patch
+            .mockResolvedValueOnce({ data: { slug: 'vue-basics' } })
+
+        const wrapper = mountCourseEditor('Teacher')
+        await flushPromises()
+
+        wrapper.vm.form.title = 'Vue Basics'
+        wrapper.vm.form.short_description = 'Intro'
+        wrapper.vm.form.long_description = 'Long text'
+        wrapper.vm.form.new_category = 'Backend'
+        wrapper.vm.form.categories = [1]
+
+        const draftBtn = wrapper.findAll('.button.button.is-info')[0]
+        await draftBtn.trigger('click')
+        await flushPromises()
+
+        expect(axios.post).toHaveBeenCalledWith(
+            '/api/v1/courses/teacher/create/categories/',
+            {
+                title: 'Backend',
+                slug: 'backend',
+            }
+        )
+
+        expect(axios.patch).toHaveBeenCalledWith(
+            '/api/v1/courses/teacher/1/edit/',
+            {
+                title: 'Vue Basics',
+                short_description: 'Intro',
+                long_description: 'Long text',
+                categories: [1, 99],
+                status: 'draft',
+                slug: 'vue-basics',
+            }
+        )
+
+        expect(push).toHaveBeenCalledWith('/courses/vue-basics')
+    })
 })

@@ -30,6 +30,7 @@
                                         <br />
                                         <button
                                             class="button is-small is-danger mt-4"
+                                            @click="deleteCategory(group)"
                                         >
                                             Delete Category
                                         </button>
@@ -114,7 +115,25 @@ export default {
                 .catch((error) => {
                     console.log(error)
                 })
-            }
+        },
+        async deleteCategory(group) {
+            const confirmed = window.confirm(
+                `Are you sure you wish to delete ${group.categotyTitle}? This action cannot be undone nad will delete any course that arent in other categories as well.`
+            )
+
+            if (!confirmed) return
+
+            this.error = ''
+
+            await axios
+                .delete(`/api/v1/courses/admin/categories/delete/${group.categoryId}/`)
+                .then(() => {
+                    this.loadCourses()
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        }
     },
     async mounted() {
         await this.loadCourses()

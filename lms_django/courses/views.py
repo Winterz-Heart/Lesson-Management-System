@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
-from django.utils import timezone
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -313,6 +313,22 @@ def get_all_users_with_roles(request):
     ]
 
     return Response(data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_delete_category(request, category_id):
+    category = Category.objects.filter(id=category_id).first()
+
+    with transaction.atomic():
+        affected_courses = Course.objects.filter(categories=category).distinct()
+
+        for course in affected_courses:
+            course.categories.remove(category)
+
+        Course.objects.filter(categories__isnull=True).delete
+        category.delete()
+
+    return Response()
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAdmin])

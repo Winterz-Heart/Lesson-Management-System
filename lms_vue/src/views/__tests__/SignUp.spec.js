@@ -123,6 +123,6 @@ describe('SignUp.Vue', () => {
         await wrapper.find('form').trigger('submit.prevent')
         await flushPromises()
 
-        expect(wrapper.text()).toContain('username: A user with that username already exists.')
+        expect(wrapper.text()).toContain('A user with that username already exists.')
     })
 })

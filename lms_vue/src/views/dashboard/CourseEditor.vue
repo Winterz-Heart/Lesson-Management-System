@@ -1,6 +1,6 @@
 <template>
     <section class="section">
-        <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
+        <template v-if="fetchCurrentUserRole === 'Teacher' || fetchCurrentUserRole === 'Admin'">
             <form>
                 <div class="field">
                     <label>Categories</label>

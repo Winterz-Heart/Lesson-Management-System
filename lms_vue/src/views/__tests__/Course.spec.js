@@ -35,7 +35,7 @@ describe('Course.vue', () => {
             .mockResolvedValueOnce({ data: mockProgress })
     })
 
-    function mountCourse(isAuthenticated = true, role = 'student') {
+    function mountCourse(isAuthenticated = true, role = 'Student') {
         return mount(Course, {
             global: {
                 mocks: {
@@ -77,8 +77,8 @@ describe('Course.vue', () => {
         mountCourse()
         await  flushPromises()
 
-        expect(axios.get).toHaveBeenNthCalledWith(1, 'api/v1/courses/vue-basics/')
-        expect(axios.get).toHaveBeenNthCalledWith(2, "api/v1/courses/1/course_progress/");
+        expect(axios.get).toHaveBeenNthCalledWith(1, '/api/v1/courses/vue-basics/')
+        expect(axios.get).toHaveBeenNthCalledWith(2, '/api/v1/courses/1/course_progress/');
         expect(axios.get).toHaveBeenCalledTimes(2)
     })
 
@@ -102,7 +102,7 @@ describe('Course.vue', () => {
     })
 
     it('shows the course description, status tag and edit when authenticated teacher', async () => {
-        const wrapper = mountCourse(true, 'teacher')
+        const wrapper = mountCourse(true, 'Teacher')
         await  flushPromises()
 
         expect(wrapper.text()).not.toContain('Not Started');
@@ -123,7 +123,7 @@ describe('Course.vue', () => {
                     },
                     $store: {
                         state: {
-                            user: { isAuthenticated: true, role: 'teacher', id: 1 }
+                            user: { isAuthenticated: true, role: 'Teacher', id: 1 }
                         }
                     }
                 },
@@ -154,7 +154,7 @@ describe('Course.vue', () => {
             .mockResolvedValueOnce({ data: { ...mockCourse, status: 'published' } })
             .mockResolvedValueOnce({ data: mockProgress });
 
-        const wrapper = mountCourse(true, 'teacher');
+        const wrapper = mountCourse(true, 'Teacher');
         await flushPromises();
 
         expect(wrapper.text()).toContain('Published');

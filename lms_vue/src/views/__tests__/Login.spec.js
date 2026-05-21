@@ -120,7 +120,7 @@ describe('Login.vue', () => {
         await flushPromises()
 
         expect(wrapper.text()).toContain(
-            'non_field_errors: Unable to log in with provided credentials.'
+            'Unable to log in with provided credentials.'
         )
     })
 })

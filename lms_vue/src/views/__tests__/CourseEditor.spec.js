@@ -13,7 +13,7 @@ vi.mock('axios', () => ({
 describe('CourseEditor.vue', () => {
     let push;
 
-    function mountCourseEditor(role='teacher') {
+    function mountCourseEditor(role='Teacher') {
         return mount(CourseEditor, {
             global: {
                 mocks: {
@@ -27,9 +27,9 @@ describe('CourseEditor.vue', () => {
                     $router: {
                         push: (push = vi.fn())
                     },
-                    $routes: {
+                    $route: {
                         params: {
-                            course_id: 1
+                            slug: 'old-title'
                         }
                     }
                 }
@@ -43,19 +43,17 @@ describe('CourseEditor.vue', () => {
         axios.get
             .mockResolvedValueOnce({ data: [] })
             .mockResolvedValueOnce({
-                data: [
-                    {
+                data: {
                     id: 1,
                     title: '',
                     short_description: '',
                     long_description: '',
                     categories: [],
                     slug: 'old-title'
-                    }
-                ]
+                }
             })
 
-        const wrapper = mountCourseEditor('student');
+        const wrapper = mountCourseEditor('Student');
         await flushPromises();
 
         expect(wrapper.text()).toContain("You don't have permisson to make courses");
@@ -66,20 +64,18 @@ describe('CourseEditor.vue', () => {
         axios.get
         .mockResolvedValueOnce({ data: [] })
         .mockResolvedValueOnce({
-            data: [
-                {
-                    id: 1,
-                    title: '',
-                    short_description: '',
-                    long_description: '',
-                    categories: [],
-                    slug: 'old-title'
-                    }
-            ]
+            data: {
+                id: 1,
+                title: '',
+                short_description: '',
+                long_description: '',
+                categories: [],
+                slug: 'old-title'
+        }
         })
         .mockResolvedValueOnce({ data: [] })
 
-        const wrapper = mountCourseEditor('teacher');
+        const wrapper = mountCourseEditor('Teacher');
         await flushPromises();
 
         const draftBtn = wrapper.findAll('button.button.is-info')[0];
@@ -97,28 +93,26 @@ describe('CourseEditor.vue', () => {
         axios.get
             .mockResolvedValueOnce({ data: [{ id: 1, title: 'Frontend' }] })
             .mockResolvedValueOnce({ 
-                data: [
-                    {
-                        id: 1,
-                        title: 'Old Title',
-                        short_description: 'Old short',
-                        long_description: 'Old long',
-                        categories: [{ id: 1, title: 'Frontend' }],
-                        slug: 'old-title'
-                    }
-                ]
+                data: {
+                    id: 1,
+                    title: 'Old Title',
+                    short_description: 'Old short',
+                    long_description: 'Old long',
+                    categories: [{ id: 1, title: 'Frontend' }],
+                    slug: 'old-title'
+                }
             })
             .mockResolvedValueOnce({ data: [{ id: 2, slug: 'other-course' }] })
 
         axios.patch.mockResolvedValueOnce({ data: { slug: 'vue-basics' } });
 
-        const wrapper = mountCourseEditor('teacher');
+        const wrapper = mountCourseEditor('Teacher');
         await flushPromises();
 
         wrapper.vm.form.title = 'Vue Basics';
         wrapper.vm.form.short_description = 'Intro';
         wrapper.vm.form.long_description = 'Long text';
-        wrapper.vm.form.categories = [1];
+        wrapper.vm.selectedCategories = [1];
 
         const draftBtn = wrapper.findAll('button.button.is-info')[0];
         await draftBtn.trigger('click');

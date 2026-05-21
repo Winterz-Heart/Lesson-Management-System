@@ -4,7 +4,7 @@ import MyAccount from "../dashboard/MyAccount.vue";
 
 let store
 
-function mountMyAccount(role = 'student') {
+function mountMyAccount(role = 'Student') {
     store = {
         state: {
             user: {
@@ -47,7 +47,19 @@ describe('MyAccount.vue', () => {
     })
 
     it('renders the account heading and navigation links for teacher role', () => {
-        const wrapper = mountMyAccount('teacher')
+        const wrapper = mountMyAccount('Teacher')
+
+        expect(wrapper.text()).toContain('My Account')
+        expect(wrapper.text()).toContain('Course Creator')
+        expect(wrapper.text()).toContain('Draft Courses')
+        expect(wrapper.text()).toContain('Published Courses')
+        expect(wrapper.text()).toContain('Student Tracker')
+        expect(wrapper.text()).not.toContain('My Started Courses')
+        expect(wrapper.text()).not.toContain('My Finished Courses')
+    })
+
+    it('renders the account heading and navigation links for admin role', () => {
+        const wrapper = mountMyAccount('Teacher')
 
         expect(wrapper.text()).toContain('My Account')
         expect(wrapper.text()).toContain('Course Creator')

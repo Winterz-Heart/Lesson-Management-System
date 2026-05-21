@@ -13,7 +13,7 @@ vi.mock('axios', () => ({
 describe('CourseCreator.vue', () => {
     let push;
 
-    function mountCourseCreator(role='teacher') {
+    function mountCourseCreator(role='Teacher') {
         return mount(CourseCreator, {
             global: {
                 mocks: {
@@ -37,7 +37,7 @@ describe('CourseCreator.vue', () => {
     it('blocks non-teacher/admin users', async () => {
         axios.get.mockResolvedValueOnce({ data: [] });
 
-        const wrapper = mountCourseCreator('student');
+        const wrapper = mountCourseCreator('Student');
         await flushPromises();
 
         expect(wrapper.text()).toContain("You don't have permisson to make courses");
@@ -49,7 +49,7 @@ describe('CourseCreator.vue', () => {
         .mockResolvedValueOnce({ data: [] })
         .mockResolvedValueOnce({ data: [] })
 
-        const wrapper = mountCourseCreator('teacher');
+        const wrapper = mountCourseCreator('Teacher');
         await flushPromises();
 
         const draftBtn = wrapper.findAll('button.button.is-info')[0];
@@ -70,7 +70,7 @@ describe('CourseCreator.vue', () => {
 
         axios.post.mockResolvedValueOnce({ data: { slug: 'vue-basics' } });
 
-        const wrapper = mountCourseCreator('teacher');
+        const wrapper = mountCourseCreator('Teacher');
         await flushPromises();
 
         wrapper.vm.form.title = 'Vue Basics';

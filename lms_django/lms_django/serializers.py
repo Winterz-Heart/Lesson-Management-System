@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
+from courses.models import UserProfile
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta:
@@ -25,10 +26,16 @@ class CurrentUserSerializer(BaseUserSerializer):
 
     def get_role(self, user):
         if user.is_superuser or user.is_staff:
-            return 'Admin'
+            return UserProfile.ROLE_ADMIN
+
+        profile = getattr(user, 'profile', None)
+        if profile and profile.role in dict(UserProfile.ROLE_CHOICES):
+            return profile.role
 
         group_names = {name.lower() for name in user.groups.values_list('name', flat=True)}
+        if 'Admin' in group_names:
+            return UserProfile.ROLE_ADMIN
         if 'Teacher' in group_names:
-            return 'Teacher'
-        
-        return 'Student'
+            return UserProfile.ROLE_TEACHER
+
+        return UserProfile.ROLE_STUDENT

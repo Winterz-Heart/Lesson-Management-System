@@ -130,7 +130,7 @@ export default {
             await axios
                 .delete(`/api/v1/courses/teacher/${this.course_id}/delete/`)
                 .then(() => {
-                    if (this.fetchCurrentUserRole === 'teacher') {
+                    if (this.fetchCurrentUserRole === 'Teacher') {
                         const redirect = this.form.status === 'published'
                         ? '/dashboard/my-account/drafts'
                         : '/dashboard/my-account/published'
@@ -138,7 +138,7 @@ export default {
                         this.$router.push(redirect)
                     }
 
-                    if (this.fetchCurrentUserRole === 'admin') {
+                    if (this.fetchCurrentUserRole === 'Admin') {
                         const redirect = this.form.status === 'published'
                         ? '/dashboard/admin/drafts'
                         : '/dashboard/admin/published'

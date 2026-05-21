@@ -29,7 +29,7 @@
                         <template v-if="isAuthenticated">
                             <h2 class="subtitle">Introduction</h2>
                             <div class="is-flex is-justify-content is-align-items-right">
-                                <template v-if="fetchCurrentUserRole === 'student'">
+                                <template v-if="fetchCurrentUserRole === 'Student'">
                                     <p class="tag is-info ml-auto mr-1 mb-2">{{ statusLabel }}</p>
                                     <button
                                         v-if="progress.status === 'not_started'"
@@ -45,9 +45,9 @@
                                     </button>
                                 </template>
 
-                                <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
+                                <template v-if="fetchCurrentUserRole === 'Teacher' || fetchCurrentUserRole === 'Admin'">
                                     <p class="tag is-info ml-auto">{{ pubOrDraft }}</p>
-                                    <template v-if="course.id && (isCreator || fetchCurrentUserRole === 'admin')">
+                                    <template v-if="course.id && (isCreator || fetchCurrentUserRole === 'Admin')">
                                         <router-link
                                             class="tag is-info"
                                             :to="{ name: 'my-account-course-edit', params: { slug: course.slug } }"

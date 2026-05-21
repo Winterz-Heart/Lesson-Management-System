@@ -1,7 +1,7 @@
 <template>
     <div class="admin-tudent-tracker">
         <h2 class="title is-4">Adjust Student Progress</h2>
-        <template v-if="fetchCurrentUserRole === 'admin'">
+        <template v-if="fetchCurrentUserRole === 'Admin'">
             <div>
                 <p>Add student to course:</p>
                 <select v-model="selectedStudentID">

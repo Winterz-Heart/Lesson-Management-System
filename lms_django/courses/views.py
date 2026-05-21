@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework.response import Response
@@ -16,7 +16,7 @@ from .serializers import (
     StudentCourseProgessSerializer
     )
 from .permissions import IsTeacherOrAdmin, IsAdmin
-from .models import Category, Course, CourseProgress
+from .models import Category, Course, CourseProgress, UserProfile
 
 def _get_user_role(user):
     if not user.is_authenticated:
@@ -25,8 +25,19 @@ def _get_user_role(user):
     profile = getattr(user, 'profile', None)
     return getattr(profile, 'role', None)
 
+def sync_user_role(user, new_role):
+    user.profile.role = new_role
+    user.profile.save(update_fields=['role'])
+
+    user.groups.clear()
+    group, _ = Group.objects.get_or_create(name=new_role)
+    user.groups.add(group)
+
+    user.is_staff = new_role == 'Admin'
+    user.save(update_fields=['is_staff'])
+
 def _is_admin(user):
-    return user.is_authenticated and (user.is_staff or _get_user_role(user) == 'admin')
+    return user.is_authenticated and (user.is_staff or _get_user_role(user) == 'Admin')
 
 def _can_view_draft_course(request, course):
     if _is_admin(request.user):
@@ -34,7 +45,7 @@ def _can_view_draft_course(request, course):
     
     return (
         request.user.is_authenticated and
-        _get_user_role(request.user) == 'teacher' and
+        _get_user_role(request.user) == 'Teacher' and
         course.created_by_id == request.user.id
     )
 
@@ -44,7 +55,7 @@ def _visible_courses_queryset(request):
     if _is_admin(request.user):
         return courses
     
-    if request.user.is_authenticated and _get_user_role(request.user) == 'teacher':
+    if request.user.is_authenticated and _get_user_role(request.user) == 'Teacher':
         return courses.filter(Q(status=Course.STATUS_PUBLISHED) | Q(created_by=request.user))
     
     return courses.filter(status=Course.STATUS_PUBLISHED)
@@ -93,7 +104,7 @@ def get_teacher_courses(request, user_id):
     
     if _is_admin(request.user):
         courses = user.courses.all().prefetch_related('categories')
-    elif request.user.is_authenticated and request.user.id == user_id and _get_user_role(request.user) == 'teacher':
+    elif request.user.is_authenticated and request.user.id == user_id and _get_user_role(request.user) == 'Teacher':
         courses = user.courses.all().prefetch_related('categories')
     else:
         courses = user.courses.filter(status=Course.STATUS_PUBLISHED).prefecth_related('categories')
@@ -225,7 +236,7 @@ def get_admin_published_courses(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsTeacherOrAdmin])
 def get_student_progress_table(request):
-    users = User.objects.filter(profile__role='student').prefetch_related(
+    users = User.objects.filter(profile__role='Student').prefetch_related(
         'courses_progress__course__categories'
     )
     serializer = StudentCourseProgessSerializer(users, many=True)
@@ -292,3 +303,14 @@ def get_all_users_with_roles(request):
     ]
 
     return Response(data)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def change_user_role(request):
+    user_id = request.data.get('user_id')
+    new_role = request.data.get('new_role')
+
+    user = User.objects.select_related('profile').get(id=user_id)
+    sync_user_role(user, new_role)
+    
+    return Response({'message': f'User {user.first_name} {user.last_name} role updated to {new_role}'})

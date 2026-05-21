@@ -1,6 +1,6 @@
 <template>
     <section class="section">
-        <template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin'">
+        <template v-if="fetchCurrentUserRole === 'Teacher' || fetchCurrentUserRole === 'Admin'">
             <h2 class="title is-4">Student Progress</h2>
 
             <table class="table is-fullwidth is-hoverable" >

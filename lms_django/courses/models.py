@@ -5,9 +5,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class UserProfile(models.Model):
-    ROLE_STUDENT = 'student'
-    ROLE_TEACHER = 'teacher'
-    ROLE_ADMIN = 'admin'
+    ROLE_STUDENT = 'Student'
+    ROLE_TEACHER = 'Teacher'
+    ROLE_ADMIN = 'Admin'
 
     ROLE_CHOICES = [
         (ROLE_STUDENT, 'Student'),

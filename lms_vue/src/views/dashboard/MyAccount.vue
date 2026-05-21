@@ -11,7 +11,7 @@
 			role="navigation account"
 			aria-label="navigation"
 		>
-			<template v-if="fetchCurrentUserRole === 'student'">
+			<template v-if="fetchCurrentUserRole === 'Student'">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-start" >
 						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
@@ -21,7 +21,7 @@
 				</div>
 			</template>
 
-			<template v-if="fetchCurrentUserRole === 'teacher' || fetchCurrentUserRole === 'admin' ">
+			<template v-if="fetchCurrentUserRole === 'Teacher' || fetchCurrentUserRole === 'Admin' ">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-start" >
 						<router-link to="/dashboard/my-account" class="navbar-item">My Account</router-link>
@@ -33,7 +33,7 @@
 				</div>
 			</template>
 
-			<template v-if="fetchCurrentUserRole === 'admin' ">
+			<template v-if="fetchCurrentUserRole === 'Admin' ">
 				<div id="navbar-item" class="navbar-menu">
 					<div class="navbar-end" >
 						<div class="navbar-item has-dropdown is-hoverable">

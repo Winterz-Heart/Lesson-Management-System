@@ -29,7 +29,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 class Category(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    short_description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

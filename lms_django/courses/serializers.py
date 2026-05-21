@@ -15,10 +15,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class CourseListSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True)
+    created_by = UserSerializer(many=False)
 
     class Meta:
         model = Course
-        fields = ('id', 'title', 'slug', 'short_description', 'categories')
+        fields = ('id', 'title', 'slug', 'short_description', 'categories', 'status', 'created_by')
 
 class CourseDetailSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(many=False)

@@ -18,6 +18,7 @@ import AdminDraftCourses from '../views/dashboard/admin/AdminDraftCourses.vue'
 import AdminPublishedCourses from '../views/dashboard/admin/AdminPublishedCourses.vue'
 import AdminStudentTracker from '../views/dashboard/admin/AdminStudentTracker.vue'
 import AdminRoleAdjustor from '../views/dashboard/admin/AdminRoleAdjustor.vue'
+import AdminCoursesTable from '../views/dashboard/admin/AdminCoursesTable.vue'
 
 import Courses from '../views/Courses.vue'
 import TeacherCourses from '../views/TeacherCourses.vue'
@@ -118,6 +119,11 @@ const routes = [
         path: 'admin/student-tracker',
         name: 'admin-student-tracker',
         component: AdminStudentTracker
+      },
+      {
+        path: 'admin/courses-table',
+        name: 'admin-courses-table',
+        component: AdminCoursesTable
       },
       {
         path: 'admin/role-adjustor',

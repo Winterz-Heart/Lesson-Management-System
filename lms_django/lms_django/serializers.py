@@ -25,10 +25,10 @@ class CurrentUserSerializer(BaseUserSerializer):
 
     def get_role(self, user):
         if user.is_superuser or user.is_staff:
-            return 'admin'
+            return 'Admin'
 
         group_names = {name.lower() for name in user.groups.values_list('name', flat=True)}
-        if 'teacher' in group_names:
-            return 'teacher'
+        if 'Teacher' in group_names:
+            return 'Teacher'
         
-        return 'student'
+        return 'Student'

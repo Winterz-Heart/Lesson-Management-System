@@ -22,6 +22,16 @@
                 </div>
 
                 <div class="field">
+                    <label>New Category</label>
+                    <input
+                        type="text"
+                        class="input"
+                        v-model="form.new_category"
+                        placeholder="Optional: create a new category when saving"
+                    />
+                </div>
+
+                <div class="field">
                     <label>Title</label>
                     <input type="text" class="input" v-model="form.title" />
                 </div>
@@ -68,6 +78,7 @@ export default {
                 short_description: '',
                 long_description: '',
                 categories: [],
+                new_category: '',
                 status: '',
             },
             categories: [],
@@ -101,11 +112,16 @@ export default {
         async submitForm(status) {
             this.errors = []
 
-            const slugifyed = this.slugify(this.form.title)
-            const existingSlugs = await axios.get('api/v1/courses/')
-            const isDupe = existingSlugs.data.some((course) => course.slug === slugifyed)
+            const courseSlugifyed = this.slugify(this.form.title)
+            const existingCourseSlugs = await axios.get('api/v1/courses/')
+            const courseIsDupe = existingCourseSlugs.data.some((course) => course.slug === courseSlugifyed)
+            
+            const newCategory = this.form.new_category.trim()
+            const newCategorySlugifyed = this.slugify(newCategory)
+            const existingCategorySlugs = await axios.get('api/v1/courses/get_categories/')
+            const newCategoryIsDupe = existingCategorySlugs.data.some((category) => category.slug === newCategorySlugifyed)
 
-            if (this.form.categories.length === 0) {
+            if (this.form.categories.length === 0 && !newCategory ) {
                 this.errors.push('The Course must have at least one category')
             }
 
@@ -113,8 +129,12 @@ export default {
                 this.errors.push('The Course must have a title')
             }
 
-            if (isDupe) {
+            if (courseIsDupe) {
                 this.errors.push('The Course must title must be unique')
+            }
+
+            if (newCategoryIsDupe) {
+                this.errors.push('The new Category name must be unique')
             }
 
             if (this.form.short_description === "") {
@@ -126,10 +146,27 @@ export default {
             }
 
             if (!this.errors.length) {
-                this.form.status = status
+                if (newCategory) {
+                    await axios
+                        .post('/api/v1/courses/teacher/create/categories/', {
+                            title: newCategory,
+                            slug: newCategorySlugifyed,
+                        })
+                        .then(response => {
+                            this.form.categories.push(response.data.id)
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
+
                 const payload = {
-                    ...this.form,
-                    slug: slugifyed,
+                    title: this.form.title,
+                    short_description: this.form.short_description,
+                    long_description: this.form.long_description,
+                    categories: this.form.categories,
+                    status: status,
+                    slug: courseSlugifyed,
                 }
 
                 await axios

@@ -13,6 +13,7 @@ from .serializers import (
     CourseProgressSerializer,
     CourseProgressCreateSerializer,
     CourseWriteSerializer,
+    CategoryWriteSerializer,
     StudentCourseProgessSerializer
     )
 from .permissions import IsTeacherOrAdmin, IsAdmin
@@ -172,6 +173,15 @@ def teacher_create_course(request):
     serializer = CourseWriteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(created_by=request.user)
+        return Response(serializer.data)
+    return Response(serializer.errors)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsTeacherOrAdmin])
+def teacher_create_category(request):
+    serializer = CategoryWriteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors)
 

@@ -210,3 +210,65 @@ class PublicCourseViewTests(CourseViewsTestBase):
             { item['slug'] for item in response.data['courses'] },
             { 'rest-apis', 'python-one', 'python-two', 'python-three' }
         )
+
+class ProgressViewTests(CourseViewsTestBase):
+    def test_start_course_creates_started_course_for_user(self):
+        self.authenticate(self.student)
+
+        response = self.client.post(self.course_url(f'{self.teacher_published.id}/start/'))
+
+        progress = CourseProgress.objects.get(
+            user = self.student,
+            course = self.teacher_published,
+        )
+
+        self.assertEqual(progress.status, CourseProgress.STATUS_STARTED)
+        self.assertIsNotNone(progress.started_at)
+        self.assertIsNone(progress.completed_at)
+
+    def test_complete_course_creates_completed_course_for_user(self):
+        self.authenticate(self.student)
+        
+        response = self.client.post(self.course_url(f'{self.teacher_published.id}/complete/'))
+
+        progress = CourseProgress.objects.get(
+            user = self.student,
+            course = self.teacher_published,
+        )
+
+        self.assertEqual(progress.status, CourseProgress.STATUS_COMPLETED)
+        self.assertIsNotNone(progress.started_at)
+        self.assertIsNotNone(progress.completed_at)
+
+    def test_get_my_progress_only_returns_current_user_progress(self):
+        CourseProgress.objects.create(
+            user = self.student,
+            course = self.teacher_published,
+            status = CourseProgress.STATUS_STARTED,
+        )
+
+        CourseProgress.objects.create(
+            user = self.other_student,
+            course = self.teacher_published,
+            status = CourseProgress.STATUS_COMPLETED,
+        )
+        
+        self.authenticate(self.student)
+
+        response = self.client.get(self.course_url('my_progress/'))
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['course'], self.teacher_published.id)
+
+    def test_get_course_progress_returns_existing_progress(self):
+        CourseProgress.objects.create(
+            user = self.student,
+            course = self.teacher_published,
+            status = CourseProgress.STATUS_STARTED,
+        )
+        self.authenticate(self.student)
+
+        response = self.client.get(self.course_url(f'{self.teacher_published.id}/course_progress/'))
+        self.assertEqual(response.data['course'], self.teacher_published.id)
+        self.assertEqual(response.data['status'], CourseProgress.STATUS_STARTED)
+        self.assertEqual(response.data['course_slug'], self.teacher_published.slug)

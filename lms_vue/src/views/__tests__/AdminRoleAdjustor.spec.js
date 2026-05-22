@@ -7,6 +7,7 @@ vi.mock('axios', () => ({
     default: {
         get: vi.fn(),
         patch: vi.fn(),
+        delete: vi.fn(),
     },
 }));
 
@@ -177,5 +178,61 @@ describe('AdminRoleAdjustor.vue', () => {
         expect(wrapper.vm.roleTagClass('Admin')).toBe('is-danger');
         expect(wrapper.vm.roleTagClass('Teacher')).toBe('is-warning');
         expect(wrapper.vm.roleTagClass('Student')).toBe('is-info');
+    });
+
+    it('deletes a user and refreshes the user list after confirmation', async () => {
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+        axios.get
+            .mockResolvedValueOnce({ data: mockUsers() })
+            .mockResolvedValueOnce({
+                data: [
+                    {
+                        id: 2,
+                        first_name: 'John',
+                        last_name: 'Smith',
+                        email: 'john@example.com',
+                        role: 'Teacher',
+                    },
+                ],
+            });
+
+        axios.delete.mockResolvedValueOnce({});
+
+        const wrapper = mountAdminRoleAdjustor('Admin');
+        await flushPromises();
+
+        await wrapper.findAll('button.is-danger')[0].trigger('click');
+        await flushPromises();
+
+        expect(confirmSpy).toHaveBeenCalledWith(
+            'Are you sure you wish to delete Jane Doe? This action cannot be undone.'
+        );
+        expect(axios.delete).toHaveBeenCalledWith(
+            '/api/v1/courses/admin/users/delete/1/'
+        );
+        expect(axios.get).toHaveBeenCalledTimes(2);
+        expect(wrapper.vm.users).toHaveLength(1);
+        expect(wrapper.vm.users[0].id).toBe(2);
+
+        confirmSpy.mockRestore();
+    });
+
+    it('does not delete a user when confirmation is cancelled', async () => {
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+        axios.get.mockResolvedValueOnce({ data: mockUsers() });
+
+        const wrapper = mountAdminRoleAdjustor('Admin');
+        await flushPromises();
+
+        await wrapper.findAll('button.is-danger')[0].trigger('click');
+        await flushPromises();
+
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(axios.delete).not.toHaveBeenCalled();
+        expect(axios.get).toHaveBeenCalledTimes(1);
+
+        confirmSpy.mockRestore();
     });
 });

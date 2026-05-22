@@ -60,6 +60,7 @@
                             </button>
                             <button
                                 class="button is-small is-danger ml-8"
+                                @click="deleteUser(user)"
                             >
                                 Delete User
                             </button>
@@ -129,6 +130,22 @@ export default {
                     this.users.forEach(user => {
                         this.pendingRoles[user.id] = user.role || ''
                     })
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        async deleteUser(user) {
+            const confirmed = window.confirm(
+                `Are you sure you wish to delete ${user.first_name} ${user.last_name}? This action cannot be undone.`
+            )
+
+            if (!confirmed) return
+            
+            await axios
+                .delete(`/api/v1/courses/admin/users/delete/${user.id}/`)
+                .then(() => {
+                    this.getUsersAndRoles()
                 })
                 .catch((error) => {
                     console.log(error)

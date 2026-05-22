@@ -553,3 +553,26 @@ class AdminCourseViewTests(CourseViewsTestBase):
         self.assertFalse(Category.objects.filter(id = self.devops.id).exists())
         standalone.refresh_from_db()
         self.assertEqual(standalone.categories.count(), 0)
+
+    def test_admin_can_delete_user(self):
+        self.authenticate(self.admin)
+
+        self.client.delete(
+            self.course_url(f'admin/users/delete/{self.student.id}/')
+        )
+
+        self.assertFalse(User.objects.filter(id=self.student.id).exists())
+        self.assertFalse(UserProfile.objects.filter(user_id=self.student.id).exists())
+
+    def test_admin_can_not_delete_own_account(self):
+        self.authenticate(self.admin)
+
+        response = self.client.delete(
+            self.course_url(f'admin/users/delete/{self.admin.id}/')
+        )
+
+        self.assertEqual(
+            response.data['detail'],
+            'You cannot delete your own account'
+        )
+        self.assertTrue(User.objects.filter(id=self.admin.id).exists())

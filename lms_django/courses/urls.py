@@ -30,6 +30,7 @@ urlpatterns = [
     path('admin/categories/delete/<int:category_id>/', views.admin_delete_category),
     path('admin/users/roles/', views.get_all_users_with_roles),
     path('admin/users/roles/change-role/', views.change_user_role),
+    path('admin/users/delete/<int:user_id>/', views.admin_delete_user),
 
     path('<slug:slug>/', views.get_course_details),
 ]

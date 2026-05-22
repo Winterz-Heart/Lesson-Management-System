@@ -340,3 +340,14 @@ def change_user_role(request):
     sync_user_role(user, new_role)
     
     return Response({'message': f'User {user.first_name} {user.last_name} role updated to {new_role}'})
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_delete_user(request, user_id):
+    user = User.objects.filter(id=user_id, is_superuser=False).first()
+
+    if user.id == request.user.id:
+        return Response({'detail': 'You cannot delete your own account'})
+    
+    user.delete()
+    return Response()

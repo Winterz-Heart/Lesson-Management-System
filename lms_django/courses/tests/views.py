@@ -422,3 +422,134 @@ class TeacherCourseViewTests(CourseViewsTestBase):
             response.data['detail'],
             'You do not have permission to delete this course'
         )
+
+class AdminCourseViewTests(CourseViewsTestBase):
+    def test_admin_get_teacher_courses_retunrs_all_courses_for_teacher(self):
+        self.authenticate(self.admin)
+
+        response = self.client.get(self.course_url(f'get_teacher_courses/{self.teacher.id}/'))
+
+        self.assertEqual(
+            { item['slug'] for item in response.data['courses'] },
+            { 'rest-apis', 'django', 'python-one', 'python-two', 'python-three' }
+        )
+
+    def test_admin_can_view_all_draft_courses(self):
+        self.authenticate(self.admin)
+
+        response = self.client.get(self.course_url('admin/drafts/'))
+
+        self.assertEqual(
+            { item['slug'] for item in response.data },
+            { 'django', 'python-zero' }
+        )
+
+    def test_admin_can_view_all_published_courses(self):
+        self.authenticate(self.admin)
+
+        response = self.client.get(self.course_url('admin/published/'))
+
+        self.assertEqual(
+            { item['slug'] for item in response.data },
+            { 'rest-apis', 'vue-basics',  'python-one', 'python-two', 'python-three' }
+        )
+
+    def test_admin_can_assign_student_to_course(self):
+        self.authenticate(self.admin)
+
+        self.client.post(
+            self.course_url('admin/student-progress/create/'),
+            {
+                'user': self.student.id,
+                'course': self.teacher_published.id,
+                'status': CourseProgress.STATUS_NOT_STARTED
+            }
+        )
+
+        progress = CourseProgress.objects.get(
+            user = self.student,
+            course = self.teacher_published
+        )
+
+        self.assertEqual(progress.status, CourseProgress.STATUS_STARTED)
+        self.assertIsNotNone(progress.started_at)
+
+    def test_admin_can_update_progress(self):
+        progress = CourseProgress.objects.create(
+            user = self.student,
+            course = self.teacher_published,
+            status = CourseProgress.STATUS_STARTED
+        )
+        self.authenticate(self.admin)
+
+        self.client.patch(
+            self.course_url(f'admin/student-progress/update/{progress.id}/'),
+            { 'status': CourseProgress.STATUS_COMPLETED }
+        )
+
+        progress.refresh_from_db()
+        self.assertEqual(progress.status, CourseProgress.STATUS_COMPLETED)
+
+    def test_admin_can_remove_student_fron_course(self):
+        progress = CourseProgress.objects.create(
+            user = self.student,
+            course = self.teacher_published,
+            status = CourseProgress.STATUS_STARTED
+        )
+        self.authenticate(self.admin)
+
+        self.client.delete(
+            self.course_url(f'admin/student-progress/delete/{progress.id}/')
+        )
+
+        self.assertFalse(CourseProgress.objects.filter(id = progress.id).exists())
+
+    def test_admin_can_get_user_with_role(self):
+        self.authenticate(self.admin)
+
+        response = self.client.get(self.course_url('admin/users/roles/'))
+        by_email = { item['email']: item['role'] for item in response.data }
+        
+        self.assertEqual(by_email['student@example.com'], UserProfile.ROLE_STUDENT)
+        self.assertEqual(by_email['teacher@example.com'], UserProfile.ROLE_TEACHER)
+        self.assertEqual(by_email['admin@example.com'], UserProfile.ROLE_ADMIN)
+
+    def test_admin_can_change_user_role(self):
+        self.authenticate(self.admin)
+
+        self.client.patch(
+            self.course_url('admin/users/roles/change-role/'),
+            {
+                'user_id': self.student.id,
+                'new_role': UserProfile.ROLE_ADMIN,
+            }
+        )
+
+
+        self.student.refresh_from_db()
+        self.student.profile.refresh_from_db()
+
+        self.assertEqual(self.student.profile.role, UserProfile.ROLE_ADMIN)
+        self.assertTrue(self.student.is_staff)
+        self.assertTrue(
+            Group.objects.filter(
+                name=UserProfile.ROLE_ADMIN,
+                user=self.student,
+            ).exists()
+        )
+
+    def test_admin_can_delete_category_and_remove_it_from_courses(self):
+        standalone = self.create_course(
+            title = 'Standalone',
+            slug = 'standalone',
+            created_by = self.teacher,
+            status = Course.STATUS_PUBLISHED,
+            categories = [self.devops],
+        )
+        self.authenticate(self.admin)
+        
+        self.client.delete(self.course_url(f'admin/categories/delete/{self.devops.id}/'))
+
+        self.assertFalse(Category.objects.filter(id = self.devops.id).exists())
+        standalone.refresh_from_db()
+        self.assertEqual(standalone.categories.count(), 0)

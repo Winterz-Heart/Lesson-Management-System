@@ -272,3 +272,153 @@ class ProgressViewTests(CourseViewsTestBase):
         self.assertEqual(response.data['course'], self.teacher_published.id)
         self.assertEqual(response.data['status'], CourseProgress.STATUS_STARTED)
         self.assertEqual(response.data['course_slug'], self.teacher_published.slug)
+
+class TeacherCourseViewTests(CourseViewsTestBase):
+    def test_teacher_course_list_can_include_own_drafts(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url())
+
+        self.assertIn('django', { item['slug'] for item in response.data })
+        self.assertNotIn('python-zero', { item['slug'] for item in response.data })
+
+    def test_teacher_course_list_filter_return_only_own_drafts(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url('?status=draft'))
+
+        self.assertIn('django', { item['slug'] for item in response.data })
+        self.assertNotIn('python-zero', { item['slug'] for item in response.data })
+
+    def test_teacher_can_view_own_draft_course_detail(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url(f'{self.teacher_draft.slug}/'))
+
+        self.assertEqual(response.data['slug'], self.teacher_draft.slug)
+
+    def test_admin_can_view_any_draft_course_detail(self):
+        self.authenticate(self.admin)
+
+        response = self.client.get(self.course_url(f'{self.other_teacher_draft.slug}/'))
+
+        self.assertEqual(response.data['slug'], self.other_teacher_draft.slug)
+
+    def test_teacher_get_teacher_courses_returns_own_drafts_and_published(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url(f'get_teacher_courses/{self.teacher.id}/'))
+
+        self.assertEqual(
+            { item['slug'] for item in response.data['courses'] },
+            { 'rest-apis', 'django', 'python-one', 'python-two', 'python-three' }
+        )
+
+    def test_teacher_can_create_course(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.post(
+            self.course_url('teacher/create/'),
+            {
+                'title': 'New Course',
+                'slug': 'new-course',
+                'short_description': 'Short',
+                'long_description': 'Long',
+                'categories': [self.backend.id, self.frontend.id],
+                'status': Course.STATUS_DRAFT,
+            }
+        )
+
+        created = Course.objects.get(slug = 'new-course')
+        self.assertEqual(created.created_by, self.teacher)
+        self.assertEqual(created.status, Course.STATUS_DRAFT)
+        self.assertEqual(created.categories.count(), 2)
+
+    def test_teacher_can_create_category(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.post(
+            self.course_url('teacher/create/categories/'),
+            {
+                'title': 'Data',
+                'slug': 'data'
+            }
+        )
+
+        self.assertTrue(Category.objects.filter(slug = 'data').exists())
+
+    def test_teacher_can_edit_own_course(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.patch(
+            self.course_url(f'teacher/{self.teacher_published.id}/edit/'),
+            { 'title': 'REST APIs Updated' }
+        )
+
+        self.teacher_published.refresh_from_db()
+        self.assertEqual(self.teacher_published.title, 'REST APIs Updated')
+
+    def test_teacher_can_not_edit_another_teachers_courses(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.patch(
+            self.course_url(f'teacher/{self.other_teacher_published.id}/edit/'),
+            { 'title': 'Should Not Work' }
+        )
+
+        self.teacher_published.refresh_from_db()
+        self.assertEqual(
+            response.data['detail'],
+            'You do not have permission to edit this course'
+        )
+
+    def test_get_my_draft_only_returns_current_teachers_drafts(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url('teacher/my_drafts/'))
+
+        self.assertEqual({ item['slug'] for item in response.data }, { 'django' })
+
+    def test_get_my_published_only_returns_current_teachers_published(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url('teacher/my_published/'))
+
+        self.assertEqual(
+            { item['slug'] for item in response.data },
+            { 'rest-apis',  'python-one', 'python-two', 'python-three' }
+        )
+
+    def test_teacher_can_ciew_student_progress_table(self):
+        CourseProgress.objects.create(
+            user = self.student,
+            course = self.teacher_published,
+            status = CourseProgress.STATUS_STARTED
+        )
+        self.authenticate(self.teacher)
+
+        response = self.client.get(self.course_url('teacher/student-progress-table/'))
+
+        self.assertEqual(
+            { item['id'] for item in response.data },
+            { self.student.id, self.other_student.id }
+        )
+
+    def test_teacher_can_delete_own_course(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.delete(self.course_url(f'teacher/{self.teacher_published.id}/delete/'))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(Course.objects.filter(id = self.teacher_published.id).exists())
+
+    def test_teacher_can_not_delete_other_teachers_course(self):
+        self.authenticate(self.teacher)
+
+        response = self.client.delete(self.course_url(f'teacher/{self.other_teacher_published.id}/delete/'))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data['detail'],
+            'You do not have permission to delete this course'
+        )

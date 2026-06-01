@@ -12,6 +12,8 @@ vi.mock('axios', () => ({
 }));
 
 describe('AdminRoleAdjustor.vue', () => {
+    let confirmMock
+
     function mockUsers() {
         return [
             {
@@ -47,6 +49,13 @@ describe('AdminRoleAdjustor.vue', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+
+        confirmMock = vi.fn()
+        Object.defineProperty(window, 'confirm', {
+            writable: true,
+            configurable: true,
+            value: confirmMock
+        })
     });
 
     it('renders the role adjustment table for admins', async () => {
@@ -181,7 +190,7 @@ describe('AdminRoleAdjustor.vue', () => {
     });
 
     it('deletes a user and refreshes the user list after confirmation', async () => {
-        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+        confirmMock.mockReturnValue(true)
 
         axios.get
             .mockResolvedValueOnce({ data: mockUsers() })
@@ -205,7 +214,7 @@ describe('AdminRoleAdjustor.vue', () => {
         await wrapper.findAll('button.is-danger')[0].trigger('click');
         await flushPromises();
 
-        expect(confirmSpy).toHaveBeenCalledWith(
+        expect(confirmMock).toHaveBeenCalledWith(
             'Are you sure you wish to delete Jane Doe? This action cannot be undone.'
         );
         expect(axios.delete).toHaveBeenCalledWith(
@@ -214,12 +223,10 @@ describe('AdminRoleAdjustor.vue', () => {
         expect(axios.get).toHaveBeenCalledTimes(2);
         expect(wrapper.vm.users).toHaveLength(1);
         expect(wrapper.vm.users[0].id).toBe(2);
-
-        confirmSpy.mockRestore();
     });
 
     it('does not delete a user when confirmation is cancelled', async () => {
-        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+        confirmMock.mockReturnValue(false)
 
         axios.get.mockResolvedValueOnce({ data: mockUsers() });
 
@@ -229,10 +236,8 @@ describe('AdminRoleAdjustor.vue', () => {
         await wrapper.findAll('button.is-danger')[0].trigger('click');
         await flushPromises();
 
-        expect(confirmSpy).toHaveBeenCalled();
+        expect(confirmMock).toHaveBeenCalled();
         expect(axios.delete).not.toHaveBeenCalled();
         expect(axios.get).toHaveBeenCalledTimes(1);
-
-        confirmSpy.mockRestore();
     });
 });

@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-o#px!5tc!d6#!dy3hf00(!3$-mblm5=_3it_+e21+41m14p%vy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'lesson-management-system-django.onrender.com',
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition
@@ -47,6 +51,7 @@ INSTALLED_APPS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8080',
+    'https://lesson-management-system.onrender.com',
 ]
 
 MIDDLEWARE = [

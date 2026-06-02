@@ -133,6 +133,7 @@ To run the Lesson Management System locally, ensure you have the following insta
 #### Frontend Requirements
 - npm package manager
 - Vue CLI dependencies installed through npm install
+- Node 22 LTS recommended for frontend development and testing, as Node 26 may cause `localStorage`-related Vitest failures
 
 #### Development Environment
 - SQLite support for local database usage
